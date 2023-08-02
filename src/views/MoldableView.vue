@@ -32,7 +32,7 @@ watch(route, () => {
 
 
 
-//? Find Page
+//? Find Page Title
 //* Distinguish the page you are currently on
 console.log(route.path)
 
