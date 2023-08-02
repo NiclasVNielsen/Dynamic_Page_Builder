@@ -1,6 +1,6 @@
 <script setup>
 //* Imports and basic setup
-import { watch, ref } from 'vue';
+import { onMounted, watch, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import templatePrinter from '../components/templatePrinter.vue';
 
@@ -76,10 +76,11 @@ const data = ref([
     order: 1
   },
   {
-    template: 1, /* Decides the template you use */
+    template: 2, /* Decides the template you use */
     title: "/",
-    Heading1: "Smush dush",
+    Heading1: "Smush dush heading",
     Paragraph1: "Smuuuuuups",
+    Paragraph2: "Smuuuuuups2",
     order: 2
   }
 ])
@@ -87,14 +88,46 @@ const data = ref([
 
 
 
+//? Setup Admin Panel
+//* Makes text fields editable
+onMounted(() => {
+    adminModeToggle(admin.value == true)
+})
+
+watch(route, () => {
+    adminModeToggle(route.params.admin == "admin")
+})
+
+const adminModeToggle = (condition) => {
+    if(condition){
+        turnOnAdminMode()
+    }else{
+        turnOffAdminMode()
+    }
+}
+
+const turnOnAdminMode = () => {
+    const fields = document.querySelectorAll(".editable")
+    fields.forEach(field => {
+        field.outerHTML = field.outerHTML.replace('class="editable"', 'class="editable" contenteditable')
+    })
+}
+const turnOffAdminMode = () => {
+    const fields = document.querySelectorAll(".editable")
+    fields.forEach(field => {
+        field.outerHTML = field.outerHTML.replace('class="editable" contenteditable', 'class="editable"')
+    })
+}
+//?------------------
+
 </script>
 
 <template>
   <main>
-    <h1>{{ title }}</h1>
-    <p>
+    <!-- <h1>{{ title }}</h1> -->
+    <!-- <p>
       admin: {{ admin }}
-    </p>
+    </p> -->
     <templatePrinter :data = "data" />
   </main>
 </template>

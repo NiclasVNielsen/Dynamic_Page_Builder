@@ -19,6 +19,9 @@ const data = props.data
         <p class="editable">
             {{ data.Paragraph1 }}
         </p>
+        <p class="editable">
+            {{ data.Paragraph2 }}
+        </p>
     </div>
     <br>
 </template>
