@@ -2,6 +2,7 @@
 //* Imports and basic setup
 import { watch, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import templatePrinter from '../components/templatePrinter.vue';
 
 const route = useRoute()
 //*------------------
@@ -34,37 +35,57 @@ watch(route, () => {
 
 //? Find Page Title
 //* Distinguish the page you are currently on
-console.log(route.path)
-
 const title = ref(route.path)
 
 const findPageTitle = () => {
+    //* Updates the title
     title.value = route.path
+    
     if(title.value.includes("admin")){
+        //* Cuts of the "/admin" from the string
         title.value = title.value.slice(0, -6)
+
+        //* "/admin" would give "" instead of "/"
         if(title.value == ""){
             title.value = "/"
         }
     }
 }
 
+//* Calls "findPageTitle" on page load
 findPageTitle()
 
+//* Calls "findPageTitle" when you redirect using vue's routerLinks
 watch(route, () => {
     findPageTitle()
 })
 //?------------------
 
 
+//? Load Data
 
+//* find data where titles match (SELECT data WHERE title = title.value)
+
+//! Test Data
 const data = ref([
   {
-    template: 1,
-    title: "hero",
-    content1: "Actual Story of Actual Play",
+    template: 1, /* Decides the template you use */
+    title: "/",
+    Heading1: "Actual Story of Actual Play",
+    Paragraph1: "Smiiiips",
     order: 1
+  },
+  {
+    template: 1, /* Decides the template you use */
+    title: "/",
+    Heading1: "Smush dush",
+    Paragraph1: "Smuuuuuups",
+    order: 2
   }
 ])
+//?------------------
+
+
 
 </script>
 
@@ -74,6 +95,7 @@ const data = ref([
     <p>
       admin: {{ admin }}
     </p>
+    <templatePrinter :data = "data" />
   </main>
 </template>
 
