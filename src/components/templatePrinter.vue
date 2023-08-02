@@ -1,4 +1,11 @@
 <script setup>
+/* Names could be
+  hero1.vue
+  hero2.vue
+  infoSec1.vue
+  infoSec2.vue
+  infoSec3.vue
+*/
 import tem1 from './templates/1.vue';
 import tem2 from './templates/2.vue';
 
@@ -17,6 +24,6 @@ const dataset = props.data
     <template v-if="data.template == 2">
       <tem2 :data = "data"/>
     </template>
-    
+
   </template>
 </template>

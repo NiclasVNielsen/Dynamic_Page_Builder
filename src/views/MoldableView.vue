@@ -125,9 +125,6 @@ const turnOffAdminMode = () => {
 <template>
   <main>
     <!-- <h1>{{ title }}</h1> -->
-    <!-- <p>
-      admin: {{ admin }}
-    </p> -->
     <templatePrinter :data = "data" />
   </main>
 </template>

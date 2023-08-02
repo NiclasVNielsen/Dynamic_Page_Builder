@@ -6,6 +6,7 @@ const data = props.data
 /* 
     Heading1: String
     Paragraph1: String
+    Paragraph2: String
 */
 
 
