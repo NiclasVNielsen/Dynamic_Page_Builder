@@ -7,8 +7,9 @@ import { RouterLink, RouterView } from 'vue-router'
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/admin/">Admin</RouterLink>
+        <RouterLink to="/admin">AdminHome</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/about/admin">AdminAbout</RouterLink>
       </nav>
     </div>
   </header>
@@ -17,8 +18,10 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <style scoped lang="sass">
+
 *
   margin: 0
   padding: 0
   box-sizing: border-box
+
 </style>
