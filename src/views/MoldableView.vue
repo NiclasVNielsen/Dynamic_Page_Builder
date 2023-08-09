@@ -1,9 +1,9 @@
 <script setup>
 //* Imports and basic setup
-import { onMounted, watch, ref } from 'vue';
+import { onUpdated, watch, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import templatePrinter from '../components/templatePrinter.vue';
-import { getContent } from '../Database/main';
+import { getContent, getContentForPage } from '../Database/main';
 
 const route = useRoute()
 //*------------------
@@ -27,9 +27,7 @@ const adminPageCheck = () => {
 adminPageCheck()
 
 //* Updates the page if we switch to an admin page
-watch(route, () => {
-    adminPageCheck()
-})
+
 //?------------------
 
 
@@ -56,24 +54,12 @@ const findPageTitle = () => {
 //* Calls "findPageTitle" on page load
 findPageTitle()
 
-//* Calls "findPageTitle" when you redirect using vue's routerLinks
-watch(route, () => {
-    findPageTitle()
-})
 //?------------------
 
 
 
 //? Setup Admin Panel
 //* Makes text fields editable
-onMounted(() => {
-    adminModeToggle(admin.value == true)
-})
-
-watch(route, () => {
-    adminModeToggle(route.params.admin == "admin")
-})
-
 const adminModeToggle = (condition) => {
     if(condition){
         turnOnAdminMode()
@@ -94,28 +80,41 @@ const turnOffAdminMode = () => {
         field.outerHTML = field.outerHTML.replace('class="editable" contenteditable', 'class="editable"')
     })
 }
+
 //?------------------
 
 
 
 //? Load Data
 const data = ref([])
-const loaded = ref(false)
 
-getContent()
-.then(content => {
-    data.value = content
-    console.log(content)
-    loaded.value = true
-})
+const loadContent = () => {
+    data.value = []
+    getContentForPage(title.value)
+    .then(content => {
+        data.value = content
+    })
+}
+loadContent()
 
 //?------------------
 
+
+
+watch(route, () => {
+    findPageTitle()
+    loadContent()                                   
+})
+
+onUpdated(() => {
+    adminPageCheck()
+    adminModeToggle(route.params.admin == "admin")
+})
 </script>
 
 <template>
   <main>
-    <templatePrinter v-if="loaded == true" :data = "data" />
+    <templatePrinter :key="data" :data = "data" />
   </main>
 </template>
 

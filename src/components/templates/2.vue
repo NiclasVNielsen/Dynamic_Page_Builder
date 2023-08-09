@@ -15,13 +15,13 @@ const data = props.data
 <template>
     <div>
         <p class="editable">
-            {{ data.Heading1 }}
+            {{ data.heading1 }}
         </p>
         <p class="editable">
-            {{ data.Paragraph1 }}
+            {{ data.paragraph1 }}
         </p>
         <p class="editable">
-            {{ data.Paragraph2 }}
+            {{ data.paragraph2 }}
         </p>
     </div>
     <br>

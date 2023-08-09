@@ -1,4 +1,4 @@
-import { /* collection, */ doc, getDoc/* , setDoc */} from "firebase/firestore"
+import { collection, query, where, doc, getDoc, getDocs} from "firebase/firestore"
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore'
 
@@ -20,6 +20,7 @@ const db = getFirestore(app);
 
 /* Call db here! */
 export const getContent = async () => {
+  /* only get 1 */
   const contentSnap = await getDoc(doc(db, "content", "Ei6N2h9vL48o4VUok4Dj"))
   if(contentSnap.exists){
     return contentSnap.data()
@@ -28,3 +29,21 @@ export const getContent = async () => {
     return null
   }
 }
+
+export const getContentForPage = async(page = "/") => {
+  const q = query(collection(db, "content"), where("page", "==", page));
+
+  const querySnapshot = await getDocs(q);
+
+  //console.log(querySnapshot)
+
+  const content = []
+
+  querySnapshot.forEach((doc) => {
+    content.push(doc.data())
+  });
+
+  return content
+}
+
+
