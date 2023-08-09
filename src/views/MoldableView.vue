@@ -63,38 +63,6 @@ watch(route, () => {
 //?------------------
 
 
-//? Load Data
-
-//* find data where titles match (SELECT data WHERE title = title.value)
-
-//! Test Data
-const data = ref([
-  {
-    template: 1, /* Decides the template you use */
-    title: "/",
-    Heading1: "Actual Story of Actual Play",
-    Paragraph1: "Smiiiips",
-    order: 1
-  },
-  {
-    template: 2, /* Decides the template you use */
-    title: "/",
-    Heading1: "Smush dush heading",
-    Paragraph1: "Smuuuuuups",
-    Paragraph2: "Smuuuuuups2",
-    order: 2
-  }
-])
-
-getContent()
-// .then(content => {
-//     data.value = content
-//     console.log(data)
-// })
-
-//?------------------
-
-
 
 //? Setup Admin Panel
 //* Makes text fields editable
@@ -128,12 +96,26 @@ const turnOffAdminMode = () => {
 }
 //?------------------
 
+
+
+//? Load Data
+const data = ref([])
+const loaded = ref(false)
+
+getContent()
+.then(content => {
+    data.value = content
+    console.log(content)
+    loaded.value = true
+})
+
+//?------------------
+
 </script>
 
 <template>
   <main>
-    <!-- <h1>{{ title }}</h1> -->
-    <templatePrinter :data = "data" />
+    <templatePrinter v-if="loaded == true" :data = "data" />
   </main>
 </template>
 

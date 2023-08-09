@@ -4,8 +4,8 @@ const data = props.data
 
 //? Needed data
 /* 
-    Heading1: String
-    Paragraph1: String
+    heading1: String
+    paragraph1: String
 */
 
 
@@ -14,10 +14,10 @@ const data = props.data
 <template>
     <div>
         <p class="editable">
-            {{ data.Heading1 }}
+            {{ data.heading1 }}
         </p>
         <p class="editable">
-            {{ data.Paragraph1 }}
+            {{ data.paragraph1 }}
         </p>
     </div>
     <br>

@@ -22,8 +22,9 @@ const db = getFirestore(app);
 export const getContent = async () => {
   const contentSnap = await getDoc(doc(db, "content", "Ei6N2h9vL48o4VUok4Dj"))
   if(contentSnap.exists){
-    console.log(contentSnap.data())
+    return contentSnap.data()
   }else{
     console.log("No data")
+    return null
   }
 }
