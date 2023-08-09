@@ -3,6 +3,7 @@
 import { onMounted, watch, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import templatePrinter from '../components/templatePrinter.vue';
+import { getContent } from '../Database/main';
 
 const route = useRoute()
 //*------------------
@@ -84,6 +85,13 @@ const data = ref([
     order: 2
   }
 ])
+
+getContent()
+// .then(content => {
+//     data.value = content
+//     console.log(data)
+// })
+
 //?------------------
 
 
