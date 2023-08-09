@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
+/* Views loaded in here are always loaded no matter what */
 import MV from '../views/MoldableView.vue'
 
 const router = createRouter({
@@ -16,5 +18,12 @@ const router = createRouter({
     }
   ]
 })
+
+/* 
+  * Load routes from db
+  * wait for it
+  * append routes
+  * initiate server
+*/
 
 export default router

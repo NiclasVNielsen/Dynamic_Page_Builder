@@ -69,12 +69,16 @@ const adminModeToggle = (condition) => {
 }
 
 const turnOnAdminMode = () => {
+    route.path == "/admin" ? adminLink.value = "/" : adminLink.value = route.path.slice(0, -6)
+
     const fields = document.querySelectorAll(".editable")
     fields.forEach(field => {
         field.outerHTML = field.outerHTML.replace('class="editable"', 'class="editable" contenteditable')
     })
 }
 const turnOffAdminMode = () => {
+    route.path == "/" ? adminLink.value = "/admin" : adminLink.value = route.path + "/admin"
+
     const fields = document.querySelectorAll(".editable")
     fields.forEach(field => {
         field.outerHTML = field.outerHTML.replace('class="editable" contenteditable', 'class="editable"')
@@ -86,7 +90,7 @@ const turnOffAdminMode = () => {
 
 
 //? Load Data
-const data = ref([])
+const data = ref("loading")
 
 const loadContent = () => {
     data.value = []
@@ -99,11 +103,11 @@ loadContent()
 
 //?------------------
 
-
+const adminLink = ref("/admin")
 
 watch(route, () => {
     findPageTitle()
-    loadContent()                                   
+    loadContent()                              
 })
 
 onUpdated(() => {
@@ -114,7 +118,32 @@ onUpdated(() => {
 
 <template>
   <main>
-    <templatePrinter :key="data" :data = "data" />
+    <header>
+        <div class="wrapper">
+            <nav>
+                <ul>
+                    <li><RouterLink to="/">Home </RouterLink></li>
+                    <li><RouterLink to="/about">About </RouterLink></li>
+                    <template v-if="true"> <!-- if admin -->
+                        <template v-if="route.params.admin != 'admin'"> <!-- if on admin -->
+                            <li><RouterLink :to="adminLink">Admin</RouterLink></li>
+                        </template>
+                        <template v-else> <!-- if not admin -->
+                            <li><RouterLink :to="adminLink">Leave Admin</RouterLink></li>
+                        </template>
+                    </template>
+                    <!-- <li><RouterLink to="/admin">AdminHome </RouterLink></li>
+                    <li><RouterLink to="/about/admin">AdminAbout </RouterLink></li> -->
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <templatePrinter v-if="data != 'loading'" :key="data" :data = "data" />
+
+    <div v-else>
+        Loading!
+    </div>
   </main>
 </template>
 
