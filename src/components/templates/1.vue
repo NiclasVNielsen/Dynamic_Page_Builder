@@ -12,13 +12,22 @@ const data = props.data
 </script>
 
 <template>
-    <div>
-        <p class="editable">
-            {{ data.heading1 }}
-        </p>
-        <p class="editable">
-            {{ data.paragraph1 }}
-        </p>
-    </div>
-    <br>
+    <section>
+        <div>
+            <p class="editable">
+                {{ data.heading1 }}
+            </p>
+            <p class="editable">
+                {{ data.paragraph1 }}
+            </p>
+        </div>
+        <br>
+    </section>
 </template>
+
+<style lang="sass" scoped>
+
+section
+    background: #eee
+
+</style>

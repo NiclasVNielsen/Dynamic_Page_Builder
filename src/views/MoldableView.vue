@@ -3,7 +3,7 @@
 import { onUpdated, watch, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import templatePrinter from '../components/templatePrinter.vue';
-import { getContent, getContentForPage } from '../Database/main';
+import { getContent, getContentForPage, getNavigationForPage } from '../Database/main';
 
 const route = useRoute()
 //*------------------
@@ -60,6 +60,8 @@ findPageTitle()
 
 //? Setup Admin Panel
 //* Makes text fields editable
+const adminLinkExtention = ref("Loading")
+
 const adminModeToggle = (condition) => {
     if(condition){
         turnOnAdminMode()
@@ -75,6 +77,8 @@ const turnOnAdminMode = () => {
     fields.forEach(field => {
         field.outerHTML = field.outerHTML.replace('class="editable"', 'class="editable" contenteditable')
     })
+
+    adminLinkExtention.value = "/admin"
 }
 const turnOffAdminMode = () => {
     route.path == "/" ? adminLink.value = "/admin" : adminLink.value = route.path + "/admin"
@@ -83,6 +87,8 @@ const turnOffAdminMode = () => {
     fields.forEach(field => {
         field.outerHTML = field.outerHTML.replace('class="editable" contenteditable', 'class="editable"')
     })
+
+    adminLinkExtention.value = ""
 }
 
 //?------------------
@@ -91,6 +97,7 @@ const turnOffAdminMode = () => {
 
 //? Load Data
 const data = ref("loading")
+const navigation = ref("loading")
 
 const loadContent = () => {
     data.value = []
@@ -98,12 +105,22 @@ const loadContent = () => {
     .then(content => {
         data.value = content
     })
+    getNavigationForPage(title.value)
+    .then(nav => {
+        if(typeof nav == "string"){
+            console.log(nav)
+        }else{
+            navigation.value = nav
+        }
+    })
 }
 loadContent()
 
 //?------------------
 
 const adminLink = ref("/admin")
+
+adminModeToggle(route.params.admin == "admin")
 
 watch(route, () => {
     findPageTitle()
@@ -118,35 +135,52 @@ onUpdated(() => {
 
 <template>
   <main>
-    <header>
-        <div class="wrapper">
-            <nav>
-                <ul>
-                    <li><RouterLink to="/">Home </RouterLink></li>
-                    <li><RouterLink to="/about">About </RouterLink></li>
-                    <template v-if="true"> <!-- if admin -->
-                        <template v-if="route.params.admin != 'admin'"> <!-- if on admin -->
-                            <li><RouterLink :to="adminLink">Admin</RouterLink></li>
-                        </template>
-                        <template v-else> <!-- if not admin -->
-                            <li><RouterLink :to="adminLink">Leave Admin</RouterLink></li>
-                        </template>
-                    </template>
-                    <!-- <li><RouterLink to="/admin">AdminHome </RouterLink></li>
-                    <li><RouterLink to="/about/admin">AdminAbout </RouterLink></li> -->
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <templatePrinter v-if="data != 'loading'" :key="data" :data = "data" />
-
+    <nav id="adminUI"><!-- if logged in as an admin -->
+        <li><RouterLink :to="adminLink">Admin</RouterLink></li>
+        <template v-if="route.params.admin != 'admin'"> <!-- if not admin -->
+            <div class="toggle off"></div>
+        </template>
+        <template v-else> <!-- if admin -->
+            <div class="toggle on"></div>
+        </template>
+    </nav>
+    <p>
+        This:
+        {{ adminLinkExtention }}
+    </p>
+    <templatePrinter v-if="data != 'loading' && navigation != 'loading' && adminLinkExtention != 'loading'" :key="data + navigation + adminLinkExtention" :data="data" :nav="navigation" :ale="adminLinkExtention"/>
     <div v-else>
         Loading!
     </div>
+
   </main>
 </template>
 
 <style scoped lang="sass">
+
+.toggle
+    height: 20px
+    width: 28px
+    border-radius: 10px
+    position: relative
+    &.on
+        background: #3F3
+        &::after
+            margin-left: 1px
+            right: 0
+    &.off
+        background: #F33
+        &::after
+            margin-left: -1px
+    &::after
+        content: ""
+        display: block
+        position: absolute
+        top: 50%
+        transform: translateY(-50%)
+        width: 20px
+        height: 20px
+        border-radius: 10px
+        background: #ccc
 
 </style>

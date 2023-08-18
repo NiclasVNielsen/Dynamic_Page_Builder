@@ -35,8 +35,6 @@ export const getContentForPage = async(page = "/") => {
 
   const querySnapshot = await getDocs(q);
 
-  //console.log(querySnapshot)
-
   const content = []
 
   querySnapshot.forEach((doc) => {
@@ -46,4 +44,23 @@ export const getContentForPage = async(page = "/") => {
   return content
 }
 
+export const getNavigationForPage = async(page = "/") => {
+  const q = query(collection(db, "navigations"), where("paths", "array-contains", page));
 
+  const querySnapshot = await getDocs(q);
+
+  let navs = []
+
+  querySnapshot.forEach((doc) => {
+    navs.push(doc.data())
+  });
+
+  if(navs.length != 1){
+    const tooMany = "Error: Too many navigations assigned to this page"
+    const tooFew = "Error: This page does not have a navigation assigned to it"
+
+    navs = navs.length > 1 ? tooMany : tooFew
+  }
+
+  return navs
+}
