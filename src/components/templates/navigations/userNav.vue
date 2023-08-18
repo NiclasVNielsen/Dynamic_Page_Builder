@@ -10,11 +10,10 @@ let adminLinkExtention = props.adminLinkExtention
 
 <template>
     <header>
-        <div class="wrapper">
+        <div>
             <nav>
                 <ul>
                     <li v-for="(path, index) in nav.paths" :key="nav.paths">
-                        <!-- <RouterLink :to="path + adminLinkExtention" > </RouterLink> -->
                         <RouterLink :to="path == '/' ? adminLinkExtention == '' ? '/' : adminLinkExtention : path + adminLinkExtention"> 
                             {{ nav.titles[index] }}
                         </RouterLink>

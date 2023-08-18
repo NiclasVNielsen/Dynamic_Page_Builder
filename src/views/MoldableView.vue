@@ -4,13 +4,14 @@ import { onUpdated, watch, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import templatePrinter from '../components/templatePrinter.vue';
 import { getContent, getContentForPage, getNavigationForPage } from '../Database/main';
+import { doc } from 'firebase/firestore';
 
 const route = useRoute()
 //*------------------
 
 
 
-//? Admin Page
+//? Checks if on Admin Page
 //* Handles the differences between admin and non-admin pages
 const admin = ref(false)
 
@@ -25,8 +26,6 @@ const adminPageCheck = () => {
 
 //* Runs a check to see if we are currently on an admin page
 adminPageCheck()
-
-//* Updates the page if we switch to an admin page
 
 //?------------------
 
@@ -99,16 +98,23 @@ const turnOffAdminMode = () => {
 const data = ref("loading")
 const navigation = ref("loading")
 
+function dataSorting(a, b){
+    return a.order - b.order
+}
+
 const loadContent = () => {
     data.value = []
     getContentForPage(title.value)
     .then(content => {
         data.value = content
+
+        data.value.sort(dataSorting)
     })
     getNavigationForPage(title.value)
     .then(nav => {
         if(typeof nav == "string"){
             console.log(nav)
+            navigation.value = []
         }else{
             navigation.value = nav
         }
@@ -131,23 +137,46 @@ onUpdated(() => {
     adminPageCheck()
     adminModeToggle(route.params.admin == "admin")
 })
+
+const adminUpdateSubmit = () => {
+    const wrappers = document.querySelectorAll(".wrapper")
+
+    const newData = []
+
+    for(let i = 0; i < wrappers.length; i++){
+        const wrapper = document.querySelector(`.index${i}`)
+
+        const fields = wrapper.querySelectorAll(".editable")
+        const index = wrapper.getAttribute('class').slice(13)
+        newData.push({})
+
+        fields.forEach((field, i2) => {
+            newData[index][`field${i2}`] = field.getAttribute('data-field')
+            newData[index][`data${i2}`] = field.innerHTML
+        })
+    }
+
+    console.log(newData)
+    /* to main.js (newData, currentPage) */
+}
 </script>
 
 <template>
   <main>
-    <nav id="adminUI"><!-- if logged in as an admin -->
-        <li><RouterLink :to="adminLink">Admin</RouterLink></li>
-        <template v-if="route.params.admin != 'admin'"> <!-- if not admin -->
-            <div class="toggle off"></div>
-        </template>
-        <template v-else> <!-- if admin -->
-            <div class="toggle on"></div>
-        </template>
-    </nav>
-    <p>
-        This:
-        {{ adminLinkExtention }}
-    </p>
+    <template v-if="true"><!-- if logged in as an admin -->
+        <nav>
+            <li><RouterLink :to="adminLink">Admin</RouterLink></li>
+            <template v-if="route.params.admin != 'admin'"> <!-- if not admin -->
+                <div class="toggle off"></div>
+            </template>
+            <template v-else> <!-- if admin -->
+                <div class="toggle on"></div>
+            </template>
+        </nav>
+        <div class="adminSubmit" @click="adminUpdateSubmit">
+            Update!
+        </div>
+    </template>
     <templatePrinter v-if="data != 'loading' && navigation != 'loading' && adminLinkExtention != 'loading'" :key="data + navigation + adminLinkExtention" :data="data" :nav="navigation" :ale="adminLinkExtention"/>
     <div v-else>
         Loading!

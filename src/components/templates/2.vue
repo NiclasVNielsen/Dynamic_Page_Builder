@@ -1,6 +1,10 @@
 <script setup>
-const props = defineProps(['data'])
+const props = defineProps({
+    data: 'array',
+    index: 'number'
+})
 const data = props.data
+const index = props.index
 
 //? Needed data
 /* 
@@ -13,16 +17,21 @@ const data = props.data
 </script>
 
 <template>
-    <div>
-        <p class="editable">
-            {{ data.heading1 }}
+    <section class="wrapper" :class="'index' + index">
+        <p>
+            {{ index }}
         </p>
-        <p class="editable">
-            {{ data.paragraph1 }}
-        </p>
-        <p class="editable">
-            {{ data.paragraph2 }}
-        </p>
-    </div>
-    <br>
+        <div>
+            <p class="editable" data-field="heading1">
+                {{ data.heading1 }}
+            </p>
+            <p class="editable" data-field="paragraph1">
+                {{ data.paragraph1 }}
+            </p>
+            <p class="editable" data-field="paragraph2">
+                {{ data.paragraph2 }}
+            </p>
+        </div>
+        <br>
+    </section>
 </template>
