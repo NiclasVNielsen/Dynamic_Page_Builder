@@ -3,7 +3,7 @@
 import { onUpdated, watch, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import templatePrinter from '../components/templatePrinter.vue';
-import { getContent, getContentForPage, getNavigationForPage } from '../Database/main';
+import { getContent, getContentForPage, getNavigationForPage, updateContentForPage } from '../Database/main';
 import { doc } from 'firebase/firestore';
 
 const route = useRoute()
@@ -156,8 +156,7 @@ const adminUpdateSubmit = () => {
         })
     }
 
-    console.log(newData)
-    /* to main.js (newData, currentPage) */
+    updateContentForPage(newData, title.value)
 }
 </script>
 
@@ -210,6 +209,8 @@ const adminUpdateSubmit = () => {
         width: 20px
         height: 20px
         border-radius: 10px
-        background: #ccc
+        background: #bbb
+        border: solid 2px #ccc
+        box-sizing: border-box
 
 </style>

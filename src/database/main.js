@@ -1,4 +1,4 @@
-import { collection, query, where, doc, getDoc, getDocs} from "firebase/firestore"
+import { collection, query, where, doc, getDoc, getDocs, updateDoc} from "firebase/firestore"
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore'
 
@@ -63,4 +63,25 @@ export const getNavigationForPage = async(page = "/") => {
   }
 
   return navs
+}
+
+export const updateContentForPage = (data, page) => {
+  //! This one is messy
+  data.forEach(async (dataset, index) => {
+    const datasetLength = Object.keys(dataset).length
+
+    const finalData = {}
+
+    for(let i = 0; i < (datasetLength / 2); i++){
+      console.log(dataset[`data${i}`])
+
+      finalData[dataset[`field${i}`]] = dataset[`data${i}`]
+    }
+
+    //! Probably overkill to get an entire snapshot just to get the ID
+    const q = query(collection(db, "content"), where("page", "==", page), where("order", "==", index));
+    const docToUpdate = await getDocs(q)
+
+    updateDoc(doc(db, "content", docToUpdate.docs[0].id), finalData)
+  })
 }

@@ -18,9 +18,6 @@ const index = props.index
 
 <template>
     <section class="wrapper" :class="'index' + index">
-        <p>
-            {{ index }}
-        </p>
         <div>
             <p class="editable" data-field="heading1">
                 {{ data.heading1 }}
