@@ -1,11 +1,15 @@
 <script setup>
 //* Imports and basic setup
 import { onUpdated, watch, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import templatePrinter from '../components/templatePrinter.vue';
-import { getContent, getContentForPage, getNavigationForPage, updateContentForPage } from '../Database/main';
+import { getContentForPage, getNavigationForPage, updateContentForPage } from '../Database/main';
+import { getAuth, signOut } from "firebase/auth"
+import router from '../router';
 
 const route = useRoute()
+const vueRouter = useRouter()
+const auth = getAuth()
 //*------------------
 
 
@@ -157,11 +161,15 @@ const adminUpdateSubmit = () => {
 
     updateContentForPage(newData, title.value)
 }
+
+const logout = () => {
+    vueRouter.push('/logout')
+}
 </script>
 
 <template>
   <main>
-    <template v-if="true"><!-- if logged in as an admin -->
+    <template v-if="auth.currentUser"><!-- if logged in as an admin -->
         <nav>
             <li><RouterLink :to="adminLink">Admin</RouterLink></li>
             <template v-if="route.params.admin != 'admin'"> <!-- if not admin -->
@@ -170,6 +178,10 @@ const adminUpdateSubmit = () => {
             <template v-else> <!-- if admin -->
                 <div class="toggle on"></div>
             </template>
+            {{ auth.currentUser.email }}
+            <p @click="logout">
+                Log out!
+            </p>
         </nav>
         <div class="adminSubmit" @click="adminUpdateSubmit">
             Update!
