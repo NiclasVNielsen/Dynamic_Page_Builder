@@ -4,7 +4,6 @@ import { onUpdated, watch, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import templatePrinter from '../components/templatePrinter.vue';
 import { getContent, getContentForPage, getNavigationForPage, updateContentForPage } from '../Database/main';
-import { doc } from 'firebase/firestore';
 
 const route = useRoute()
 //*------------------

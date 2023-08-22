@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 /* Views loaded in here are always loaded no matter what */
-import MV from '../views/MoldableView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,12 +8,21 @@ const router = createRouter({
     {
       path: '/:admin?',
       name: 'home',
-      component: MV
+      component: () => import ('../views/MoldableView.vue')
     },
     {
       path: '/about/:admin?',
       name: 'about',
-      component: MV
+      component: () => import ('../views/MoldableView.vue')
+    },
+
+
+
+    /* Admin */
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import ('../views/admin/login.vue')
     }
   ]
 })
