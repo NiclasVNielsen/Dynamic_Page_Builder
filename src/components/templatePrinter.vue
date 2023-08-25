@@ -11,6 +11,8 @@ import userNav from './templates/navigations/userNav.vue';
 import tem1 from './templates/1.vue';
 import tem2 from './templates/2.vue';
 
+const startingIndex = document.querySelectorAll(".wrapper").length
+
 const props = defineProps({
   data: 'array',
   nav: 'array',
@@ -40,11 +42,11 @@ let ale = props.ale
 
   <template v-for="(data, index) in dataset" :key="data">
     <template v-if="data.template == 1">
-      <tem1 :data = "data" :index = "index"/>
+      <tem1 :data = "data" :index = "index + startingIndex"/>
     </template>
 
     <template v-if="data.template == 2">
-      <tem2 :data = "data" :index = "index"/>
+      <tem2 :data = "data" :index = "index + startingIndex"/>
     </template>
 
   </template>

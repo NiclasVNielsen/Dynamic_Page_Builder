@@ -13,12 +13,12 @@ const index = props.index
     Paragraph2: String
 */
 
-
 </script>
 
 <template>
     <section class="wrapper" :class="'index' + index">
         <div>
+            {{ index }}
             <p class="editable" data-field="heading1">
                 {{ data.heading1 }}
             </p>

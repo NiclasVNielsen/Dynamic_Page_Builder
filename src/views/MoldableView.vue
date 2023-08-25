@@ -6,6 +6,7 @@ import templatePrinter from '../components/templatePrinter.vue';
 import { getContentForPage, getNavigationForPage, updateContentForPage } from '../Database/main';
 import { getAuth, signOut } from "firebase/auth"
 import router from '../router';
+import { default as templateIndex } from '../components/templateIndex';
 
 const route = useRoute()
 const vueRouter = useRouter()
@@ -127,13 +128,17 @@ loadContent()
 
 //?------------------
 
+
+
+//? Update Page
 const adminLink = ref("/admin")
 
 adminModeToggle(route.params.admin == "admin")
 
 watch(route, () => {
     findPageTitle()
-    loadContent()                              
+    loadContent()
+    newSection.value = false                        
 })
 
 onUpdated(() => {
@@ -159,38 +164,95 @@ const adminUpdateSubmit = () => {
         })
     }
 
-    updateContentForPage(newData, title.value)
+    updateContentForPage(newData, title.value, newSectionData.value)
 }
 
+//?------------------
+
+
+
+//? Log out
 const logout = () => {
     vueRouter.push('/logout')
 }
+
+//?------------------
+
+
+
+//? Create new section
+const newSection = ref(false)
+
+//! Make a system for this
+const newSectionData = ref([{}])
+const selectedTemplate = ref(1)
+
+const populateNewSectionData = (templateId) => {
+    templateIndex.forEach(template => {
+        if(template.templateId == templateId){
+            const newData = {
+                template: templateId
+            }
+            template.fields.forEach(field => {
+                newData[field] = "Insert text here!"
+            })
+            newSectionData.value = [newData]
+        }
+    })
+}
+populateNewSectionData(1)
+
+//?------------------
+
 </script>
 
 <template>
   <main>
     <template v-if="auth.currentUser"><!-- if logged in as an admin -->
-        <nav>
-            <li><RouterLink :to="adminLink">Admin</RouterLink></li>
-            <template v-if="route.params.admin != 'admin'"> <!-- if not admin -->
-                <div class="toggle off"></div>
-            </template>
-            <template v-else> <!-- if admin -->
-                <div class="toggle on"></div>
-            </template>
-            {{ auth.currentUser.email }}
-            <p @click="logout">
-                Log out!
-            </p>
-        </nav>
-        <div class="adminSubmit" @click="adminUpdateSubmit">
-            Update!
+        <div id="adminOverload">
+            <nav>
+                <div class="adminToggle">
+                    <RouterLink :to="adminLink">Admin</RouterLink>
+                    <template v-if="route.params.admin != 'admin'"> <!-- if not admin -->
+                        <div class="toggle off"></div>
+                    </template>
+                    <template v-else> <!-- if admin -->
+                        <div class="toggle on"></div>
+                    </template>
+                </div>
+                <p class="email">
+                    {{ auth.currentUser.email }}
+                </p>
+                <p @click="logout" class="logout">
+                    Log out!
+                </p>
+            </nav>
+            <div class="adminSubmit" @click="adminUpdateSubmit" v-if="route.params.admin == 'admin'">
+                Update!
+            </div>
         </div>
     </template>
-    <templatePrinter v-if="data != 'loading' && navigation != 'loading' && adminLinkExtention != 'loading'" :key="data + navigation + adminLinkExtention" :data="data" :nav="navigation" :ale="adminLinkExtention"/>
     <div v-else>
         Loading!
     </div>
+    <templatePrinter v-if="data != 'loading' && navigation != 'loading' && adminLinkExtention != 'loading'" :key="data + navigation + adminLinkExtention" :data="data" :nav="navigation" :ale="adminLinkExtention"/>
+    <template v-if="route.params.admin == 'admin'">
+        <div v-if="newSection == false" class="addNewSectionField" @click="newSection = true">
+            <figure>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
+            </figure>
+        </div>
+        <div v-else>
+            <div>
+                <select v-model="selectedTemplate" @change="populateNewSectionData(selectedTemplate)">
+                    <template v-for="template in templateIndex" :key="templateIndex">
+                        <option :value="template.templateId">{{ template.name }}</option>
+                    </template>
+                </select>
+            </div>
+            <templatePrinter :key="newSectionData[0].template" :data="newSectionData" :nav="['noNav']" ale="noAle"/>
+        </div>
+    </template>
 
   </main>
 </template>
@@ -223,5 +285,46 @@ const logout = () => {
         background: #bbb
         border: solid 2px #ccc
         box-sizing: border-box
+
+.addNewSectionField
+    height: 120px
+    background: #eee
+    display: flex
+    align-items: center
+    justify-content: center
+    cursor: pointer
+    transition: 100ms
+    &:hover
+        background: #f3f3f3
+        svg
+            fill: #f3f3f3
+    figure
+        background: #FFF
+        width: 90px
+        height: 90px
+        border-radius: 50%
+        display: flex
+        align-items: center
+        justify-content: center
+        fill: #eee
+        svg
+            height: 75%
+
+#adminOverload
+    nav
+        position: fixed
+        top: 0
+        right: 0
+        .adminToggle
+            display: flex
+            align-items: center
+            justify-content: flex-end
+            a
+                margin-right: .5em
+    .adminSubmit
+        position: fixed
+        bottom: 1em
+        right: 1em
+        cursor: pointer
 
 </style>

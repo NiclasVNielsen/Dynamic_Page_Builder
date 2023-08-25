@@ -1,4 +1,4 @@
-import { collection, query, where, doc, getDoc, getDocs, updateDoc} from "firebase/firestore"
+import { collection, query, where, doc, getDoc, getDocs, updateDoc, addDoc} from "firebase/firestore"
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore'
 import { firebaseConfig } from "./config.js";
@@ -56,23 +56,36 @@ export const getNavigationForPage = async(page = "/") => {
   return navs
 }
 
-export const updateContentForPage = (data, page) => {
+export const updateContentForPage = (data, page, newSecsTemplates) => {
   //! This one is messy
+
+  let newSecsIndex = 0
+
   data.forEach(async (dataset, index) => {
+    //? Align Key/Value pairs
     const datasetLength = Object.keys(dataset).length
 
     const finalData = {}
 
     for(let i = 0; i < (datasetLength / 2); i++){
-      console.log(dataset[`data${i}`])
-
       finalData[dataset[`field${i}`]] = dataset[`data${i}`]
     }
+    //?---------------------
 
     //! Probably overkill to get an entire snapshot just to get the ID
     const q = query(collection(db, "content"), where("page", "==", page), where("order", "==", index));
     const docToUpdate = await getDocs(q)
+    
+    if(docToUpdate.docs.length > 0){
+      updateDoc(doc(db, "content", docToUpdate.docs[0].id), finalData)
+    }
+    if(docToUpdate.docs.length == 0){
+      finalData['order'] = index
+      finalData['page'] = page
+      finalData['template'] = newSecsTemplates[newSecsIndex].template
+      newSecsIndex++
 
-    updateDoc(doc(db, "content", docToUpdate.docs[0].id), finalData)
+      addDoc(collection(db, "content"), finalData)
+    }
   })
 }
