@@ -15,6 +15,7 @@ const data = props.data
 
 <template>
     <div>
+        {{ data.order }}
         <p class="editable" data-field="heading1">
             {{ data.heading1 }}
         </p>

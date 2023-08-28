@@ -6,6 +6,9 @@
   infoSec2.vue
   infoSec3.vue
 */
+
+import { reOrderContentForPage } from '../database/main';
+
 import userNav from './templates/navigations/userNav.vue';
 
 import tem1 from './templates/1.vue';
@@ -36,16 +39,19 @@ let ale = props.ale
   Y = The name of the template in your "templates" folder
 -->
 <template>
+
   <template v-if="nav.template == 'userNav'">
     <userNav :nav = "nav" :adminLinkExtention = "ale"/>
   </template>
+
   <template v-for="(data, index) in dataset" :key="data">
     <section class="wrapper" :class="'index' + (index + startingIndex)">
       <div class="controlPanel" v-if="ale == '/admin'">
-        ^ <br>
-        X <br>
-        v
+        <p @click="reOrderContentForPage(index, data.page, 'up')">^</p>
+        <p>X</p>
+        <p @click="reOrderContentForPage(index, data.page, 'down')">v</p>
       </div>
+
       <template v-if="data.template == 1">
         <tem1 :data = "data"/>
       </template>
@@ -77,5 +83,9 @@ let ale = props.ale
   background: #fff
   box-shadow: 0px 0px 10px -5px #000
   text-align: center
+  p
+    cursor: pointer
+  &:hover
+    opacity: 1
 
 </style>

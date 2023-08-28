@@ -79,6 +79,8 @@ export const updateContentForPage = (data, page, newSecsTemplates) => {
     if(docToUpdate.docs.length > 0){
       updateDoc(doc(db, "content", docToUpdate.docs[0].id), finalData)
     }
+
+    //? Create new section
     if(docToUpdate.docs.length == 0){
       finalData['order'] = index
       finalData['page'] = page
@@ -86,6 +88,40 @@ export const updateContentForPage = (data, page, newSecsTemplates) => {
       newSecsIndex++
 
       addDoc(collection(db, "content"), finalData)
+    }
+  })
+}
+
+
+export const reOrderContentForPage = async (index, page, direction) => {
+  direction = direction == "up" ? -1 : 1;
+  
+  const data = await getContentForPage(page)
+
+  data.sort((a, b) => {return a.order - b.order})
+
+  //? Convert index into the order attribute of the associated object
+  const newIndex = data.map(e => e.order).indexOf(index)
+
+  //? fail safe
+  if((newIndex + direction) < 0 || (newIndex + direction) >= data.length){
+    return
+  }
+
+  //? Update the 2 sections being affected
+  data.forEach(async (element, i) => {
+    if(i == newIndex + direction || i == newIndex){
+      const x = i == newIndex ? newIndex : newIndex + direction
+      const y = i == newIndex ? newIndex + direction : newIndex
+      
+      const q = query(collection(db, "content"), where("page", "==", page), where("order", "==", data[x].order));
+
+      const docToUpdate = await getDocs(q)
+      const docRef = doc(db, "content", docToUpdate.docs[0].id);
+
+      await updateDoc(docRef, {
+        'order': data[y].order
+      })
     }
   })
 }
