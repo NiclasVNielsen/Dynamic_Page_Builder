@@ -7,7 +7,7 @@
   infoSec3.vue
 */
 
-import { reOrderContentForPage } from '../database/main';
+import { reOrderContentForPage, deleteContentForPage } from '../database/main';
 
 import userNav from './templates/navigations/userNav.vue';
 
@@ -48,7 +48,7 @@ let ale = props.ale
     <section class="wrapper" :class="'index' + (index + startingIndex)">
       <div class="controlPanel" v-if="ale == '/admin'">
         <p @click="reOrderContentForPage(index, data.page, 'up')">^</p>
-        <p>X</p>
+        <p @click="deleteContentForPage(index, data.page)">X</p>
         <p @click="reOrderContentForPage(index, data.page, 'down')">v</p>
       </div>
 

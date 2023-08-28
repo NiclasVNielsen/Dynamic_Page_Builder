@@ -1,4 +1,4 @@
-import { collection, query, where, doc, getDoc, getDocs, updateDoc, addDoc} from "firebase/firestore"
+import { collection, query, where, doc, getDoc, getDocs, updateDoc, addDoc, deleteDoc} from "firebase/firestore"
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore'
 import { firebaseConfig } from "./config.js";
@@ -94,7 +94,7 @@ export const updateContentForPage = (data, page, newSecsTemplates) => {
 
 
 export const reOrderContentForPage = async (index, page, direction) => {
-  direction = direction == "up" ? -1 : 1;
+  direction = direction == "up" ? -1 : 1; //?  up = -1, down = 1
   
   const data = await getContentForPage(page)
 
@@ -117,10 +117,31 @@ export const reOrderContentForPage = async (index, page, direction) => {
       const q = query(collection(db, "content"), where("page", "==", page), where("order", "==", data[x].order));
 
       const docToUpdate = await getDocs(q)
-      const docRef = doc(db, "content", docToUpdate.docs[0].id);
+      const docRef = doc(db, "content", docToUpdate.docs[0].id)
 
       await updateDoc(docRef, {
         'order': data[y].order
+      })
+    }
+  })
+}
+
+
+export const deleteContentForPage = async (index, page) => {
+  const deleteQuery = query(collection(db, "content"), where("page", "==", page), where("order", "==", index));
+  const docToDelete = await getDocs(deleteQuery)
+  await deleteDoc(doc(db, "content", docToDelete.docs[0].id))
+
+
+  //? Reduce the order of all sections with an order higher than index by 1
+  const updateQuery = query(collection(db, "content"), where("page", "==", page));
+  const docsToUpdate = await getDocs(updateQuery);
+
+
+  docsToUpdate.forEach(async docToUpdate => {
+    if(docToUpdate.data().order > index){
+      await updateDoc(doc(db, "content", docToUpdate.id), {
+        'order': docToUpdate.data().order - 1
       })
     }
   })
