@@ -39,10 +39,9 @@ let ale = props.ale
   <template v-if="nav.template == 'userNav'">
     <userNav :nav = "nav" :adminLinkExtention = "ale"/>
   </template>
-
   <template v-for="(data, index) in dataset" :key="data">
     <section class="wrapper" :class="'index' + (index + startingIndex)">
-      <div class="controlPanel">
+      <div class="controlPanel" v-if="ale == '/admin'">
         ^ <br>
         X <br>
         v
