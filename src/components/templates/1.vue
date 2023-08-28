@@ -1,10 +1,8 @@
 <script setup>
 const props = defineProps({
     data: 'array',
-    index: 'number'
 })
 const data = props.data
-const index = props.index
 
 //? Needed data
 /* 
@@ -16,23 +14,20 @@ const index = props.index
 </script>
 
 <template>
-    <section class="wrapper" :class="'index' + index">
-        <div>
-            {{ index }}
-            <p class="editable" data-field="heading1">
-                {{ data.heading1 }}
-            </p>
-            <p class="editable" data-field="paragraph1">
-                {{ data.paragraph1 }}
-            </p>
-        </div>
+    <div>
+        <p class="editable" data-field="heading1">
+            {{ data.heading1 }}
+        </p>
+        <p class="editable" data-field="paragraph1">
+            {{ data.paragraph1 }}
+        </p>
         <br>
-    </section>
+    </div>
 </template>
 
 <style lang="sass" scoped>
 
-section
+div
     background: #eee
 
 </style>

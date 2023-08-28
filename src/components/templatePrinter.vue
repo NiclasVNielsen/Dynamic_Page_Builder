@@ -41,13 +41,42 @@ let ale = props.ale
   </template>
 
   <template v-for="(data, index) in dataset" :key="data">
-    <template v-if="data.template == 1">
-      <tem1 :data = "data" :index = "index + startingIndex"/>
-    </template>
+    <section class="wrapper" :class="'index' + (index + startingIndex)">
+      <div class="controlPanel">
+        ^ <br>
+        X <br>
+        v
+      </div>
+      <template v-if="data.template == 1">
+        <tem1 :data = "data"/>
+      </template>
 
-    <template v-if="data.template == 2">
-      <tem2 :data = "data" :index = "index + startingIndex"/>
-    </template>
-
+      <template v-if="data.template == 2">
+        <tem2 :data = "data"/>
+      </template>
+    </section>
   </template>
 </template>
+
+<style scoped lang="sass">
+
+.wrapper
+  position: relative
+  &:hover
+    .controlPanel
+      opacity: 1
+
+.controlPanel
+  position: absolute
+  right: 0
+  top: 50%
+  transform: translateY(-50%)
+  opacity: 0
+  transition: 150ms
+  padding: 10px
+  border-radius: 20px
+  background: #fff
+  box-shadow: 0px 0px 10px -5px #000
+  text-align: center
+
+</style>

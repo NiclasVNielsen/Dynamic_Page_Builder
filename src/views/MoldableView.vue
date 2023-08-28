@@ -183,7 +183,6 @@ const logout = () => {
 //? Create new section
 const newSection = ref(false)
 
-//! Make a system for this
 const newSectionData = ref([{}])
 const selectedTemplate = ref(1)
 
@@ -200,7 +199,7 @@ const populateNewSectionData = (templateId) => {
         }
     })
 }
-populateNewSectionData(1)
+populateNewSectionData(templateIndex[0].templateId) /* The argument here is the default template to use */
 
 //?------------------
 
@@ -312,6 +311,7 @@ populateNewSectionData(1)
 
 #adminOverload
     nav
+        z-index: 10000
         position: fixed
         top: 0
         right: 0
