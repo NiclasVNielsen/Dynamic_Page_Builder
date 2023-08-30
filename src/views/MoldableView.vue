@@ -3,7 +3,7 @@
 import { onUpdated, watch, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import templatePrinter from '../components/templatePrinter.vue';
-import { getContentForPage, getNavigationForPage, updateContentForPage } from '../Database/main';
+import { getContentForPage, getNavigationForPage, updateContentForPage } from '../database/main';
 import { getAuth, signOut } from "firebase/auth"
 import router from '../router';
 import { default as templateIndex } from '../components/templateIndex';
@@ -106,23 +106,21 @@ function dataSorting(a, b){
     return a.order - b.order
 }
 
-const loadContent = () => {
+const loadContent = async () => {
     data.value = []
-    getContentForPage(title.value)
-    .then(content => {
-        data.value = content
 
-        data.value.sort(dataSorting)
-    })
-    getNavigationForPage(title.value)
-    .then(nav => {
-        if(typeof nav == "string"){
-            console.log(nav)
-            navigation.value = []
-        }else{
-            navigation.value = nav
-        }
-    })
+    const content = await getContentForPage(title.value)
+
+    data.value = content
+    data.value.sort(dataSorting)
+
+    const nav = await getNavigationForPage(title.value)
+    if(typeof nav == "string"){
+        console.log(nav)
+        navigation.value = []
+    }else{
+        navigation.value = nav
+    }
 }
 loadContent()
 
@@ -146,7 +144,7 @@ onUpdated(() => {
     adminModeToggle(route.params.admin == "admin")
 })
 
-const adminUpdateSubmit = () => {
+const adminUpdateSubmit = async () => {
     const wrappers = document.querySelectorAll(".wrapper")
 
     const newData = []
@@ -164,7 +162,8 @@ const adminUpdateSubmit = () => {
         })
     }
 
-    updateContentForPage(newData, title.value, newSectionData.value)
+    await updateContentForPage(newData, title.value, newSectionData.value)
+    vueRouter.push('/update')
 }
 
 //?------------------
@@ -183,7 +182,7 @@ const logout = () => {
 //? Create new section
 const newSection = ref(false)
 
-const newSectionData = ref([{}])
+const newSectionData = ref([])
 const selectedTemplate = ref(1)
 
 const populateNewSectionData = (templateId) => {
@@ -199,7 +198,7 @@ const populateNewSectionData = (templateId) => {
         }
     })
 }
-populateNewSectionData(templateIndex[0].templateId) /* The argument here is the default template to use */
+//populateNewSectionData(templateIndex[0].templateId) /* The argument here is the default template to use */
 
 //?------------------
 
@@ -236,7 +235,7 @@ populateNewSectionData(templateIndex[0].templateId) /* The argument here is the 
     </div>
     <templatePrinter v-if="data != 'loading' && navigation != 'loading' && adminLinkExtention != 'loading'" :key="data + navigation + adminLinkExtention" :data="data" :nav="navigation" :ale="adminLinkExtention"/>
     <template v-if="route.params.admin == 'admin'">
-        <div v-if="newSection == false" class="addNewSectionField" @click="newSection = true">
+        <div v-if="newSection == false" class="addNewSectionField" @click="newSection = true; populateNewSectionData(selectedTemplate)">
             <figure>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
             </figure>

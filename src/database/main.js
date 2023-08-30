@@ -2,147 +2,148 @@ import { collection, query, where, doc, getDoc, getDocs, updateDoc, addDoc, dele
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore'
 import { firebaseConfig } from "./config.js";
+import { alignKeyValuePairs, updateSection, createSection, editContentOrder, reCalculateOrder } from '../database/helpers.js'
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 
-
 /* Call db here! */
-export const getContent = async () => {
-  /* only get 1 */
-  const contentSnap = await getDoc(doc(db, "content", "Ei6N2h9vL48o4VUok4Dj"))
-  if(contentSnap.exists){
-    return contentSnap.data()
-  }else{
-    console.log("No data")
-    return null
-  }
-}
+export const getContentForPage = async(page = "/", fullData = "no") => {
+  return new Promise (async (resolve, reject) => {
+    try {
+      let content = []
 
-export const getContentForPage = async(page = "/") => {
-  const q = query(collection(db, "content"), where("page", "==", page));
+      const q = query(collection(db, "content"), where("page", "==", page));
+      const querySnapshot = await getDocs(q);
 
-  const querySnapshot = await getDocs(q);
-
-  const content = []
-
-  querySnapshot.forEach((doc) => {
-    content.push(doc.data())
-  });
-
-  return content
+      if(fullData == "no"){
+        querySnapshot.forEach((doc) => {
+          content.push(doc.data())
+        });
+      }else{
+        content = querySnapshot
+      }
+    
+      resolve(content)
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
 
 export const getNavigationForPage = async(page = "/") => {
-  const q = query(collection(db, "navigations"), where("paths", "array-contains", page));
-
-  const querySnapshot = await getDocs(q);
-
-  let navs = []
-
-  querySnapshot.forEach((doc) => {
-    navs.push(doc.data())
-  });
-
-  if(navs.length != 1){
-    const tooMany = "Error: Too many navigations assigned to this page"
-    const tooFew = "Error: This page does not have a navigation assigned to it"
-
-    navs = navs.length > 1 ? tooMany : tooFew
-  }
-
-  return navs
+  return new Promise (async (resolve, reject) => {
+    try {
+      const q = query(collection(db, "navigations"), where("paths", "array-contains", page));
+      const querySnapshot = await getDocs(q);
+    
+      let response = []
+    
+      querySnapshot.forEach((doc) => {
+        response.push(doc.data())
+      })
+    
+      if(response.length != 1){
+        const tooMany = "Error: Too many navigations assigned to this page"
+        const tooFew = "Error: This page does not have a navigation assigned to it"
+    
+        reject(response.length > 1 ? tooMany : tooFew)
+      }else{
+        resolve(response)
+      }
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
 
-export const updateContentForPage = (data, page, newSecsTemplates) => {
-  //! This one is messy
 
-  let newSecsIndex = 0
 
-  data.forEach(async (dataset, index) => {
-    //? Align Key/Value pairs
-    const datasetLength = Object.keys(dataset).length
-
-    const finalData = {}
-
-    for(let i = 0; i < (datasetLength / 2); i++){
-      finalData[dataset[`field${i}`]] = dataset[`data${i}`]
-    }
-    //?---------------------
-
-    //! Probably overkill to get an entire snapshot just to get the ID
-    const q = query(collection(db, "content"), where("page", "==", page), where("order", "==", index));
-    const docToUpdate = await getDocs(q)
+export const updateContentForPage = async (data, page, newSecsTemplates) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      //? Used for multiple creates
+      let newSecsIndex = 0
     
-    if(docToUpdate.docs.length > 0){
-      updateDoc(doc(db, "content", docToUpdate.docs[0].id), finalData)
-    }
+      for(let index = 0; index < data.length; index++){
+        const dataset = data[index]
+        
+        //? Align Key/Value pairs
+        const alignedData = alignKeyValuePairs(dataset)
+        //?---------------------
+    
+        //? Update section
+        const updateResult = await updateSection(page, index, alignedData)
+        //?---------------------
 
-    //? Create new section
-    if(docToUpdate.docs.length == 0){
-      finalData['order'] = index
-      finalData['page'] = page
-      finalData['template'] = newSecsTemplates[newSecsIndex].template
-      newSecsIndex++
+        //? Create new section
+        if(updateResult == "not found"){
+          if(newSecsTemplates.length > newSecsIndex){
+            createSection(index, page, newSecsTemplates[newSecsIndex].template, alignedData)
 
-      addDoc(collection(db, "content"), finalData)
+            newSecsIndex++
+          }else{
+            console.error("Data overflow")
+          }
+        }
+        //?---------------------
+      }
+      resolve()
+    } catch (error) {
+      reject()
     }
   })
 }
 
 
 export const reOrderContentForPage = async (index, page, direction) => {
-  direction = direction == "up" ? -1 : 1; //?  up = -1, down = 1
-  
-  const data = await getContentForPage(page)
-
-  data.sort((a, b) => {return a.order - b.order})
-
-  //? Convert index into the order attribute of the associated object
-  const newIndex = data.map(e => e.order).indexOf(index)
-
-  //? fail safe
-  if((newIndex + direction) < 0 || (newIndex + direction) >= data.length){
-    return
-  }
-
-  //? Update the 2 sections being affected
-  data.forEach(async (element, i) => {
-    if(i == newIndex + direction || i == newIndex){
-      const x = i == newIndex ? newIndex : newIndex + direction
-      const y = i == newIndex ? newIndex + direction : newIndex
+  return new Promise (async (resolve, reject) => {
+    try {
+      direction = direction == "up" ? -1 : 1; //?  up = -1, down = 1
       
-      const q = query(collection(db, "content"), where("page", "==", page), where("order", "==", data[x].order));
-
-      const docToUpdate = await getDocs(q)
-      const docRef = doc(db, "content", docToUpdate.docs[0].id)
-
-      await updateDoc(docRef, {
-        'order': data[y].order
-      })
+      //? Prevents error if there is gaps in ordering   * [1, 2, 4, 5]
+      const data = await getContentForPage(page)
+      data.sort((a, b) => {return a.order - b.order})
+    
+      //? Convert index into the order attribute of the associated object
+      const newIndex = data.map(e => e.order).indexOf(index)
+      //?-------------------
+    
+      //? fail safe, would move the target out of array
+      if((index + direction) < 0 || (index + direction) >= data.length){
+        console.log("Out of bounce")
+        reject("Out of bounce")
+      //?-------------------
+      }else{
+        //? Update the 2 sections being affected
+        await editContentOrder(newIndex, "x", page)
+        await editContentOrder(newIndex + direction, newIndex, page)
+        await editContentOrder("x", newIndex + direction, page)
+        
+        resolve()
+      }
+    } catch (error) {
+      reject(error)
     }
   })
 }
 
 
+
 export const deleteContentForPage = async (index, page) => {
-  const deleteQuery = query(collection(db, "content"), where("page", "==", page), where("order", "==", index));
-  const docToDelete = await getDocs(deleteQuery)
-  await deleteDoc(doc(db, "content", docToDelete.docs[0].id))
-
-
-  //? Reduce the order of all sections with an order higher than index by 1
-  const updateQuery = query(collection(db, "content"), where("page", "==", page));
-  const docsToUpdate = await getDocs(updateQuery);
-
-
-  docsToUpdate.forEach(async docToUpdate => {
-    if(docToUpdate.data().order > index){
-      await updateDoc(doc(db, "content", docToUpdate.id), {
-        'order': docToUpdate.data().order - 1
-      })
+  return new Promise (async (resolve, reject) => {
+    try {
+      const deleteQuery = query(collection(db, "content"), where("page", "==", page), where("order", "==", index));
+      const docToDelete = await getDocs(deleteQuery)
+      await deleteDoc(doc(db, "content", docToDelete.docs[0].id))
+    
+      reCalculateOrder(page)
+      
+      resolve()
+    } catch (error) {
+      reject(error)
     }
   })
 }

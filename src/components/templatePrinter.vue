@@ -10,9 +10,12 @@
 import { reOrderContentForPage, deleteContentForPage } from '../database/main';
 
 import userNav from './templates/navigations/userNav.vue';
+import { useRouter } from 'vue-router'
 
 import tem1 from './templates/1.vue';
 import tem2 from './templates/2.vue';
+
+const router = useRouter()
 
 const startingIndex = document.querySelectorAll(".wrapper").length
 
@@ -24,6 +27,16 @@ const props = defineProps({
 let dataset = props.data
 let nav = props.nav[0]
 let ale = props.ale
+
+const deleteSection = async (index, page) => {
+  await deleteContentForPage(index, page)
+  router.push('/update')
+}
+
+const changeOrder = async (index, page, direction) => {
+  await reOrderContentForPage(index, page, direction)
+  router.push('/update')
+}
 
 </script>
 
@@ -47,9 +60,9 @@ let ale = props.ale
   <template v-for="(data, index) in dataset" :key="data">
     <section class="wrapper" :class="'index' + (index + startingIndex)">
       <div class="controlPanel" v-if="ale == '/admin'">
-        <p @click="reOrderContentForPage(index, data.page, 'up')">^</p>
-        <p @click="deleteContentForPage(index, data.page)">X</p>
-        <p @click="reOrderContentForPage(index, data.page, 'down')">v</p>
+        <p @click="changeOrder(index, data.page, 'up')">^</p>
+        <p @click="deleteSection(index, data.page)">X</p>
+        <p @click="changeOrder(index, data.page, 'down')">v</p>
       </div>
 
       <template v-if="data.template == 1">

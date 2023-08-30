@@ -18,6 +18,15 @@ const router = createRouter({
 
 
 
+    /* Practical */
+    {
+      path: '/update',
+      name: 'update',
+      component: () => import ('../views/Update.vue')
+    },
+
+
+
     /* Admin */
     {
       path: '/login',
