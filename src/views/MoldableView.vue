@@ -3,10 +3,15 @@
 import { onUpdated, watch, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import templatePrinter from '../components/templatePrinter.vue';
-import { getContentForPage, getNavigationForPage, updateContentForPage } from '../database/main';
-import { getAuth, signOut } from "firebase/auth"
-import router from '../router';
+import { getAuth } from "firebase/auth"
 import { default as templateIndex } from '../components/templateIndex';
+
+import { default as adminCheck } from './Modules/adminPageCheck'
+import { default as findTitle } from './Modules/findPageTitle'
+import { default as adminModeToggle } from './Modules/adminModeToggle'
+import { default as getContent } from './Modules/getContent'
+import { default as submitAdminUpdate } from './Modules/submitAdminUpdate'
+import { default as getNewSectionData } from './Modules/getNewSectionData'
 
 const route = useRoute()
 const vueRouter = useRouter()
@@ -18,18 +23,15 @@ const auth = getAuth()
 //? Checks if on Admin Page
 //* Handles the differences between admin and non-admin pages
 const admin = ref(false)
+const adminLink = ref("/admin")
 
 //* Checks if the page is set to admin mode
-const adminPageCheck = () => {
-    if(route.params.admin == "admin"){
-        admin.value = true
-    }else{
-        admin.value = false
-    }
+const adminPageCheck = async () => {
+    admin.value = await adminCheck()
 }
 
 //* Runs a check to see if we are currently on an admin page
-adminPageCheck()
+await adminPageCheck()
 
 //?------------------
 
@@ -39,23 +41,12 @@ adminPageCheck()
 //* Distinguish the page you are currently on
 const title = ref(route.path)
 
-const findPageTitle = () => {
-    //* Updates the title
-    title.value = route.path
-    
-    if(title.value.includes("admin")){
-        //* Cuts of the "/admin" from the string
-        title.value = title.value.slice(0, -6)
-
-        //* "/admin" would give "" instead of "/"
-        if(title.value == ""){
-            title.value = "/"
-        }
-    }
+const findPageTitle = async () => {
+    title.value = await findTitle(route)
 }
 
 //* Calls "findPageTitle" on page load
-findPageTitle()
+await findPageTitle()
 
 //?------------------
 
@@ -65,33 +56,10 @@ findPageTitle()
 //* Makes text fields editable
 const adminLinkExtention = ref("Loading")
 
-const adminModeToggle = (condition) => {
-    if(condition){
-        turnOnAdminMode()
-    }else{
-        turnOffAdminMode()
-    }
-}
-
-const turnOnAdminMode = () => {
-    route.path == "/admin" ? adminLink.value = "/" : adminLink.value = route.path.slice(0, -6)
-
-    const fields = document.querySelectorAll(".editable")
-    fields.forEach(field => {
-        field.outerHTML = field.outerHTML.replace('class="editable"', 'class="editable" contenteditable')
-    })
-
-    adminLinkExtention.value = "/admin"
-}
-const turnOffAdminMode = () => {
-    route.path == "/" ? adminLink.value = "/admin" : adminLink.value = route.path + "/admin"
-
-    const fields = document.querySelectorAll(".editable")
-    fields.forEach(field => {
-        field.outerHTML = field.outerHTML.replace('class="editable" contenteditable', 'class="editable"')
-    })
-
-    adminLinkExtention.value = ""
+const updateAdminStatus = async (condition = route.params.admin == "admin", link = adminLink.value) => {
+    const response = await adminModeToggle(condition, link)
+    adminLinkExtention.value = response.adminLinkExtention
+    adminLink.value = response.adminLink
 }
 
 //?------------------
@@ -102,25 +70,10 @@ const turnOffAdminMode = () => {
 const data = ref("loading")
 const navigation = ref("loading")
 
-function dataSorting(a, b){
-    return a.order - b.order
-}
-
 const loadContent = async () => {
-    data.value = []
-
-    const content = await getContentForPage(title.value)
-
-    data.value = content
-    data.value.sort(dataSorting)
-
-    const nav = await getNavigationForPage(title.value)
-    if(typeof nav == "string"){
-        console.log(nav)
-        navigation.value = []
-    }else{
-        navigation.value = nav
-    }
+    const response = await getContent(title.value, navigation.value)
+    data.value = response.data
+    navigation.value = response.navigation
 }
 loadContent()
 
@@ -129,9 +82,8 @@ loadContent()
 
 
 //? Update Page
-const adminLink = ref("/admin")
 
-adminModeToggle(route.params.admin == "admin")
+await updateAdminStatus()
 
 watch(route, () => {
     findPageTitle()
@@ -139,31 +91,31 @@ watch(route, () => {
     newSection.value = false                        
 })
 
-onUpdated(() => {
+onUpdated(async () => {
     adminPageCheck()
-    adminModeToggle(route.params.admin == "admin")
+    await updateAdminStatus()
 })
 
 const adminUpdateSubmit = async () => {
-    const wrappers = document.querySelectorAll(".wrapper")
-
-    const newData = []
-
-    for(let i = 0; i < wrappers.length; i++){
-        const wrapper = document.querySelector(`.index${i}`)
-
-        const fields = wrapper.querySelectorAll(".editable")
-        const index = wrapper.getAttribute('class').slice(13)
-        newData.push({})
-
-        fields.forEach((field, i2) => {
-            newData[index][`field${i2}`] = field.getAttribute('data-field')
-            newData[index][`data${i2}`] = field.innerHTML
-        })
+    const response = await submitAdminUpdate(vueRouter, title.value, newSectionData.value)
+    if(response == "Success!"){
+        console.log("Success!") //! Popup message!
     }
+}
 
-    await updateContentForPage(newData, title.value, newSectionData.value)
-    vueRouter.push('/update')
+//?------------------
+
+
+
+//? Create new section
+const newSection = ref(false)
+
+const newSectionData = ref([])
+const selectedTemplate = ref(1)
+
+const populateNewSectionData = async (templateId) => {
+    const response = await getNewSectionData(templateId)
+    newSectionData.value = [response]
 }
 
 //?------------------
@@ -177,32 +129,9 @@ const logout = () => {
 
 //?------------------
 
-
-
-//? Create new section
-const newSection = ref(false)
-
-const newSectionData = ref([])
-const selectedTemplate = ref(1)
-
-const populateNewSectionData = (templateId) => {
-    templateIndex.forEach(template => {
-        if(template.templateId == templateId){
-            const newData = {
-                template: templateId
-            }
-            template.fields.forEach(field => {
-                newData[field] = "Insert text here!"
-            })
-            newSectionData.value = [newData]
-        }
-    })
-}
-//populateNewSectionData(templateIndex[0].templateId) /* The argument here is the default template to use */
-
-//?------------------
-
 </script>
+
+
 
 <template>
   <main>
@@ -251,9 +180,10 @@ const populateNewSectionData = (templateId) => {
             <templatePrinter :key="newSectionData[0].template" :data="newSectionData" :nav="['noNav']" ale="noAle"/>
         </div>
     </template>
-
   </main>
 </template>
+
+
 
 <style scoped lang="sass">
 
