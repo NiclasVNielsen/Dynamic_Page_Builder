@@ -129,6 +129,18 @@ const logout = () => {
 
 //?------------------
 
+
+
+//? closeImageLibrary
+const closeImageLibrary = (e) => {
+    e.stopPropagation();
+
+    const imageLibraryBar = document.querySelector("#imageLibrary")
+    imageLibraryBar.style.display = "none"
+}
+
+//?------------------
+
 </script>
 
 
@@ -159,11 +171,17 @@ const logout = () => {
             </div>
         </div>
     </template>
+
+
+
+    <templatePrinter v-if="data != 'loading' && navigation != 'loading' && adminLinkExtention != 'loading'" :key="data + navigation + adminLinkExtention" :data="data" :nav="navigation" :ale="adminLinkExtention"/>
     <div v-else>
         Loading!
     </div>
-    <templatePrinter v-if="data != 'loading' && navigation != 'loading' && adminLinkExtention != 'loading'" :key="data + navigation + adminLinkExtention" :data="data" :nav="navigation" :ale="adminLinkExtention"/>
-    <template v-if="route.params.admin == 'admin'">
+
+
+
+    <template v-if="route.params.admin == 'admin' && auth.currentUser">
         <div v-if="newSection == false" class="addNewSectionField" @click="newSection = true; populateNewSectionData(selectedTemplate)">
             <figure>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
@@ -179,7 +197,16 @@ const logout = () => {
             </div>
             <templatePrinter :key="newSectionData[0].template" :data="newSectionData" :nav="['noNav']" ale="noAle"/>
         </div>
+
+        <div id="imageLibrary" style="display: none;">
+            <div @click="closeImageLibrary"></div>
+            <aside>
+
+            </aside>
+        </div>
     </template>
+
+
   </main>
 </template>
 
@@ -255,5 +282,22 @@ const logout = () => {
         bottom: 1em
         right: 1em
         cursor: pointer
+
+#imageLibrary
+    height: 100vh
+    width: 100%
+    position: fixed
+    top: 0
+    left: 0
+    z-index: 10001
+    justify-content: flex-end
+    aside
+        height: 100vh
+        width: 100%
+        max-width: 400px
+        background: #eee
+    >div
+        height: 100vh
+        flex: 1
 
 </style>

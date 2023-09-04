@@ -1,4 +1,5 @@
 import { useRoute } from 'vue-router'
+import { default as editImage } from './editImage'
 
 export default async function adminModeToggle (condition, adminLink) {
     const route = useRoute()
@@ -14,6 +15,8 @@ export default async function adminModeToggle (condition, adminLink) {
                 fields.forEach(field => {
                     field.outerHTML = field.outerHTML.replace('class="editable"', 'class="editable" contenteditable')
                 })
+
+                editImage(condition)
         
                 adminLinkExtention = "/admin"
             }else{
@@ -23,6 +26,8 @@ export default async function adminModeToggle (condition, adminLink) {
                 fields.forEach(field => {
                     field.outerHTML = field.outerHTML.replace('class="editable" contenteditable', 'class="editable"')
                 })
+                
+                editImage(condition)
         
                 adminLinkExtention = ""
             }
