@@ -14,6 +14,7 @@ import { useRouter } from 'vue-router'
 
 import tem1 from './templates/1.vue';
 import tem2 from './templates/2.vue';
+import tem3 from './templates/3.vue';
 
 const router = useRouter()
 
@@ -71,6 +72,10 @@ const changeOrder = async (index, page, direction) => {
 
       <template v-if="data.template == 2">
         <tem2 :data = "data"/>
+      </template>
+
+      <template v-if="data.template == 3">
+        <tem3 :data = "data"/>
       </template>
     </section>
   </template>

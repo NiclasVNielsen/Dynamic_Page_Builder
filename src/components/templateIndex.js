@@ -15,6 +15,15 @@ const templateIndex = [
             'paragraph1',
             'paragraph2'
         ]
+    },
+    {
+        'name': "Section 3",
+        'templateId': "3",
+        'fields': [
+            'heading1',
+            'paragraph1',
+            'image1'
+        ]
     }
 ]
 

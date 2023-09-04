@@ -2,7 +2,7 @@ import { collection, query, where, doc, getDoc, getDocs, updateDoc, addDoc, dele
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore'
 import { firebaseConfig } from "./config.js";
-import { alignKeyValuePairs, updateSection, createSection, editContentOrder, reCalculateOrder } from '../database/helpers.js'
+import { updateSection, createSection, editContentOrder, reCalculateOrder } from '../database/helpers.js'
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -69,19 +69,15 @@ export const updateContentForPage = async (data, page, newSecsTemplates) => {
     
       for(let index = 0; index < data.length; index++){
         const dataset = data[index]
-        
-        //? Align Key/Value pairs
-        const alignedData = alignKeyValuePairs(dataset)
-        //?---------------------
     
         //? Update section
-        const updateResult = await updateSection(page, index, alignedData)
+        const updateResult = await updateSection(page, index, dataset)
         //?---------------------
 
         //? Create new section
         if(updateResult == "not found"){
           if(newSecsTemplates.length > newSecsIndex){
-            createSection(index, page, newSecsTemplates[newSecsIndex].template, alignedData)
+            createSection(index, page, newSecsTemplates[newSecsIndex].template, dataset)
 
             newSecsIndex++
           }else{
@@ -90,9 +86,9 @@ export const updateContentForPage = async (data, page, newSecsTemplates) => {
         }
         //?---------------------
       }
-      resolve()
+      resolve("Success!")
     } catch (error) {
-      reject()
+      reject(error)
     }
   })
 }
@@ -122,7 +118,7 @@ export const reOrderContentForPage = async (index, page, direction) => {
         await editContentOrder(newIndex + direction, newIndex, page)
         await editContentOrder("x", newIndex + direction, page)
         
-        resolve()
+        resolve("Success!")
       }
     } catch (error) {
       reject(error)
@@ -141,7 +137,7 @@ export const deleteContentForPage = async (index, page) => {
     
       reCalculateOrder(page)
       
-      resolve()
+      resolve("Success!")
     } catch (error) {
       reject(error)
     }

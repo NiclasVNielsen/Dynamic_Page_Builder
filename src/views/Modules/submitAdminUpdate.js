@@ -1,6 +1,6 @@
 import { updateContentForPage } from '../../database/main';
 
-export default async function loadContent (router, title, newSectionData) {
+export default async function loadContent (router, title, newSectionData = undefined) {
     return new Promise (async (resolve, reject) => {
         try {
             const wrappers = document.querySelectorAll(".wrapper")
@@ -14,10 +14,11 @@ export default async function loadContent (router, title, newSectionData) {
                 const index = wrapper.getAttribute('class').slice(13)
                 newData.push({})
 
-                //! Clean this please, its messing up "updateContentForPage" so i can't use it anywhere else
-                fields.forEach((field, i2) => {
-                    newData[index][`field${i2}`] = field.getAttribute('data-field')
-                    newData[index][`data${i2}`] = field.innerHTML
+                fields.forEach(field => {
+                    const fieldAttribute = field.getAttribute('data-field')
+                    const data = field.innerHTML
+
+                    newData[index][fieldAttribute] = data
                 })
             }
 

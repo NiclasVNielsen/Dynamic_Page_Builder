@@ -10,33 +10,6 @@ const db = getFirestore(app);
 
 
 
-export const alignKeyValuePairs = (dataset) => {
-    /*
-        ? Takes in:
-        {
-        data0: "I am a heading and i am number 1"
-        data1: "i am the one and only, paragraph2"
-        field0: "heading1"
-        field1: "paragraph1"
-        }
-
-        ? Returns:
-        {
-        heading1: "I am a heading and i am number 1"
-        paragraph1: "i am the one and only, paragraph2"
-        }
-    */
-    const datasetLength = Object.keys(dataset).length
-        
-    const alignedData = {}
-
-    for(let i = 0; i < (datasetLength / 2); i++){
-        alignedData[dataset[`field${i}`]] = dataset[`data${i}`]
-    }
-
-    return alignedData
-}
-
 export const updateSection = async (page, index, data) => {
     return new Promise(async (resolve, reject) => {
         try {
