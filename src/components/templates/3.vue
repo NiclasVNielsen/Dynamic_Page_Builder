@@ -23,7 +23,7 @@ const data = props.data
             {{ data.paragraph1 }}
         </p>
         {{ data.image1 }}
-        <img :src="data.image1" alt="" class="editable" data-field="image1">
+        <img :src="'/test/' + data.image1" alt="" class="editable" data-field="image1">
         <br>
     </div>
 </template>

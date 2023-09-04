@@ -15,8 +15,15 @@ export default async function loadContent (router, title, newSectionData = undef
                 newData.push({})
 
                 fields.forEach(field => {
+                    console.log(field.nodeName)
                     const fieldAttribute = field.getAttribute('data-field')
-                    const data = field.innerHTML
+                    let data = null
+
+                    if(field.nodeName != "IMG"){
+                        data = field.innerHTML
+                    }else{
+                        data = field.src
+                    }
 
                     newData[index][fieldAttribute] = data
                 })
