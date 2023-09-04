@@ -3,6 +3,7 @@
 import { onUpdated, watch, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import templatePrinter from '../components/templatePrinter.vue';
+import imageLibrary from '../components/imageLibrary.vue';
 import { getAuth } from "firebase/auth"
 import { default as templateIndex } from '../components/templateIndex';
 
@@ -17,6 +18,21 @@ const route = useRoute()
 const vueRouter = useRouter()
 const auth = getAuth()
 //*------------------
+
+
+//? Image selection
+const selectedImage = ref(null)
+
+const selectImage = () => {
+    const images = document.querySelectorAll("img.editable")
+    images.forEach((image, index) => {
+        image.addEventListener("click", () => {
+            selectedImage.value = index
+        })
+    })
+}
+
+//?------------------
 
 
 
@@ -60,6 +76,8 @@ const updateAdminStatus = async (condition = route.params.admin == "admin", link
     const response = await adminModeToggle(condition, link)
     adminLinkExtention.value = response.adminLinkExtention
     adminLink.value = response.adminLink
+    
+    selectImage()
 }
 
 //?------------------
@@ -88,7 +106,7 @@ await updateAdminStatus()
 watch(route, () => {
     findPageTitle()
     loadContent()
-    newSection.value = false                        
+    newSection.value = false                    
 })
 
 onUpdated(async () => {
@@ -201,7 +219,7 @@ const closeImageLibrary = (e) => {
         <div id="imageLibrary" style="display: none;">
             <div @click="closeImageLibrary"></div>
             <aside>
-
+                <imageLibrary :key="selectedImage" :data="selectedImage"/>
             </aside>
         </div>
     </template>
