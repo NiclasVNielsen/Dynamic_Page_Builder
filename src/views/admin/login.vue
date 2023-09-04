@@ -21,7 +21,7 @@ const login = () => {
         router.push('/')
     })
     .catch(() => {
-        console.log("Something went wrong Scally!")
+        console.error("Something went wrong Scally!")
     })
 }
 

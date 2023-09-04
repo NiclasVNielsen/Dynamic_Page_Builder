@@ -15,7 +15,6 @@ export default async function loadContent (router, title, newSectionData = undef
                 newData.push({})
 
                 fields.forEach(field => {
-                    console.log(field.nodeName)
                     const fieldAttribute = field.getAttribute('data-field')
                     let data = null
 

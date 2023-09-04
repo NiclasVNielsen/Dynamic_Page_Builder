@@ -109,7 +109,7 @@ export const reOrderContentForPage = async (index, page, direction) => {
     
       //? fail safe, would move the target out of array
       if((index + direction) < 0 || (index + direction) >= data.length){
-        console.log("Out of bounce")
+        console.error("Out of bounce")
         reject("Out of bounce")
       //?-------------------
       }else{

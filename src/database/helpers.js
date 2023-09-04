@@ -45,13 +45,10 @@ export const createSection = async (index, page, template, data) => {
 }
 
 export const editContentOrder = async (oldOrder, newOrder, page) => {
-    console.log(oldOrder, newOrder)
     return new Promise (async (resolve, reject) => {
         try {
         const q = query(collection(db, "content"), where("page", "==", page), where("order", "==", oldOrder));
         const docToUpdate = await getDocs(q)
-        
-        console.log(docToUpdate.docs)
 
         const docRef = doc(db, "content", docToUpdate.docs[0].id)
 
