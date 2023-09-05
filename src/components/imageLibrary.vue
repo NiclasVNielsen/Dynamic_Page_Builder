@@ -49,12 +49,12 @@ const prepareImageDelete = (url) => {
         <div class="upload" @click="upload = true">
             <uploadImage/>
         </div>
-        <div class="images" v-for="image in images" :key="images[0]">
-            <div @click="updateImage(image)">
+        <div class="imageContainer" v-for="image in images" :key="images[0]">
+            <div class="images" @click="updateImage(image)">
                 <img :src="image" alt="Ohh no, image not found :sadEmoji:">
             </div>
-            <div @click="prepareImageDelete(image)">
-                deleteImage
+            <div class="delete" @click="prepareImageDelete(image)">
+                Delete Image
             </div>
         </div>
     </section>
@@ -79,17 +79,33 @@ section
         &:hover
             background: #f5f5f5
             color: #333
-    .images
-        width: 50%
-        aspect-ratio: 1/1
-        display: flex
-        align-items: center
-        justify-content: center
-        background: #eee
+    .imageContainer
+        cursor: pointer
+        width: 48%
+        background: #fff
+        border-radius: 5px
         overflow: hidden
-        img
-            width: 100%
-            height: auto
-            display: block
+        margin: 0 1%
+        margin-bottom: 10px
+        .images
+            aspect-ratio: 1/1
+            display: flex
+            align-items: center
+            justify-content: center
+            background: #eee
+            overflow: hidden
+            transition: 50ms
+            filter: grayscale(50%)
+            &:hover
+                filter: grayscale(0%)
+            img
+                width: 100%
+                height: auto
+                display: block
+        .delete
+            padding: 5px
+            transition: 50ms
+            &:hover
+                background: #f99
 
 </style>
