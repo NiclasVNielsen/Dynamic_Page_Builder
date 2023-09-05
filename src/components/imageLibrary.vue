@@ -1,10 +1,12 @@
 <script setup>
 
+import { useRouter } from 'vue-router'
 import uploadImage from './uploadImage.vue';
+import { default as deleteImage } from './deleteImage.js';
 import { default as getAllImages } from '../views/Modules/getAllImages'
 import { ref } from 'vue';
 
-
+const router = useRouter()
 
 const props = defineProps({
   data: 'Number'
@@ -27,6 +29,17 @@ const updateImage = (image) => {
     images[imageIndex].src = image
 }
 
+const prepareImageDelete = (url) => {
+    //? Url
+    //? Start: https://firebasestorage.googleapis.com/v0/b/asoap-bbc58.appspot.com/o/65914833361640744.jpg?alt=media&token=790bad1b-2a76-446d-8999-f6fc19bb1f64
+    //? End  : 65914833361640744.jpg
+    const temp = url.split('/')
+    url = temp[temp.length-1]
+    url = url.split('?')[0]
+
+    deleteImage(url, router)
+}
+
 </script>
 
 
@@ -36,8 +49,13 @@ const updateImage = (image) => {
         <div class="upload" @click="upload = true">
             <uploadImage/>
         </div>
-        <div class="images" v-for="image in images" :key="images[0]" @click="updateImage(image)">
-            <img :src="image" alt="Ohh no, image not found :sadEmoji:">
+        <div class="images" v-for="image in images" :key="images[0]">
+            <div @click="updateImage(image)">
+                <img :src="image" alt="Ohh no, image not found :sadEmoji:">
+            </div>
+            <div @click="prepareImageDelete(image)">
+                deleteImage
+            </div>
         </div>
     </section>
 </template>
