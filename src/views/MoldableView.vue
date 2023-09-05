@@ -261,6 +261,7 @@ const closeImageLibrary = (e) => {
 
 .addNewSectionField
     height: 120px
+    margin-bottom: 200px
     background: #eee
     display: flex
     align-items: center

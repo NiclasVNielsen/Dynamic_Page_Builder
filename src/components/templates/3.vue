@@ -13,6 +13,8 @@ const data = props.data
 
 </script>
 
+
+
 <template>
     <div>
         {{ data.order }}
@@ -26,3 +28,12 @@ const data = props.data
         <br>
     </div>
 </template>
+
+
+
+<style lang="sass" scoped>
+
+img
+    width: 200px
+
+</style>

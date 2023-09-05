@@ -15,4 +15,9 @@ import { RouterLink, RouterView } from 'vue-router'
   padding: 0
   box-sizing: border-box
 
+img
+  width: 100%
+  height: auto
+  display: block
+
 </style>
