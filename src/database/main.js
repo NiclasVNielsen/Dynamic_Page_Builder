@@ -164,3 +164,30 @@ export const getNavigations = async () => {
     }
   })
 }
+
+
+
+export const createPage = async (pageTitle, nav) => {
+  return new Promise (async (resolve, reject) => {
+    try {
+      const docRef = doc(db, "navigations", nav)
+      const q = query(docRef)
+      const navDoc = await getDoc(q)
+    
+      nav = navDoc.data()
+    
+      nav.paths.push(`/${pageTitle.toLowerCase()}`)
+      nav.titles.push(pageTitle)
+    
+    
+      await updateDoc(docRef, {
+        paths: nav.paths,
+        titles: nav.titles
+      });
+      
+      resolve("Success!")
+    } catch (error) {
+      reject(error)
+    }
+  })
+}

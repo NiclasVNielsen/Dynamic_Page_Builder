@@ -12,6 +12,11 @@ const routes = [
     name: 'update',
     component: () => import ('../views/Update.vue')
   },
+  {
+    path: '/update/admin',
+    name: 'adminUpdate',
+    component: () => import ('../views/Update.vue')
+  },
 
 
 
