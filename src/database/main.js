@@ -143,3 +143,24 @@ export const deleteContentForPage = async (index, page) => {
     }
   })
 }
+
+
+
+export const getNavigations = async () => {
+  return new Promise (async (resolve, reject) => {
+    try {
+      const q = query(collection(db, "navigations"));
+      const navs = await getDocs(q);
+
+      const result = []
+
+      navs.forEach((doc) => {
+        result.push(doc.data())
+      })
+
+      resolve(result)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
