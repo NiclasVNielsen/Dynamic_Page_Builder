@@ -104,10 +104,14 @@ loadContent()
 await updateAdminStatus()
 
 watch(route, async () => {
+    if(route.path == "/update"){
+        vueRouter.go(-1)
+    }
+
     findPageTitle()
     await findPageTitle()
     loadContent()
-    newSection.value = false                    
+    newSection.value = false
 })
 
 onUpdated(async () => {
@@ -166,7 +170,6 @@ const closeImageLibrary = (e) => {
 
 <template>
   <main>
-    {{ title }}
     <template v-if="auth.currentUser"><!-- if logged in as an admin -->
         <div id="adminOverload">
             <nav>

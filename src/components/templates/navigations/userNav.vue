@@ -1,5 +1,5 @@
 <script setup>
-import { createPage } from '../../../database/main'
+import { createPage, deletePage } from '../../../database/main'
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
@@ -19,6 +19,11 @@ const addPage = async (e) => {
     router.push('/update')
 }
 
+const removePage = async (title) => {
+    deletePage(title, nav.template)
+    router.push('/update')
+}
+
 </script>
 
 <template>
@@ -31,7 +36,7 @@ const addPage = async (e) => {
                             {{ nav.titles[index] }}
                         </RouterLink>
                         <template v-if="adminLinkExtention == '/admin'">
-                            <p>
+                            <p @click="removePage(nav.titles[index])">
                                 🗑️
                             </p>
                         </template>

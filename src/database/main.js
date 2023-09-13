@@ -46,10 +46,15 @@ export const getNavigationForPage = async(page = "/") => {
       })
     
       if(response.length != 1){
-        const tooMany = "Error: Too many navigations assigned to this page"
-        const tooFew = "Error: This page does not have a navigation assigned to it"
-    
-        reject(response.length > 1 ? tooMany : tooFew)
+        if(page == "/update"){
+          resolve([{template: "None"}])
+
+        }else{
+          const tooMany = "Error: Too many navigations assigned to this page"
+          const tooFew = "Error: This page does not have a navigation assigned to it"
+
+          reject(response.length > 1 ? tooMany : tooFew)
+        }
       }else{
         resolve(response)
       }
@@ -179,10 +184,47 @@ export const createPage = async (pageTitle, nav) => {
       nav.paths.push(`/${pageTitle.toLowerCase()}`)
       nav.titles.push(pageTitle)
     
-    
       await updateDoc(docRef, {
         paths: nav.paths,
         titles: nav.titles
+      })
+      
+      resolve("Success!")
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+
+
+export const deletePage = async (pageTitle, nav) => {
+  return new Promise (async (resolve, reject) => {
+    try {
+      const docRef = doc(db, "navigations", nav)
+      const q = query(docRef)
+      const navDoc = await getDoc(q)
+    
+      nav = navDoc.data()
+
+      const filteredPaths = []
+      const filteredTitles = []
+
+      for(let i = 0; i < nav.titles.length; i++){
+        if(nav.titles[i] != pageTitle){
+          if(nav.titles[i] == "Home"){
+            filteredPaths.push("/")
+          }else{
+            filteredPaths.push(`/${nav.titles[i].toLowerCase()}`)
+          }
+          filteredTitles.push(nav.titles[i])
+
+        }
+      }
+    
+      await updateDoc(docRef, {
+        paths: filteredPaths,
+        titles: filteredTitles
       });
       
       resolve("Success!")

@@ -10,7 +10,7 @@ const routes = [
   {
     path: '/update',
     name: 'update',
-    component: () => import ('../views/Update.vue')
+    component: () => import ('../views/MoldableView.vue')
   },
   {
     path: '/update/admin',
