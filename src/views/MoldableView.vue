@@ -103,8 +103,9 @@ loadContent()
 
 await updateAdminStatus()
 
-watch(route, () => {
+watch(route, async () => {
     findPageTitle()
+    await findPageTitle()
     loadContent()
     newSection.value = false                    
 })
@@ -165,6 +166,7 @@ const closeImageLibrary = (e) => {
 
 <template>
   <main>
+    {{ title }}
     <template v-if="auth.currentUser"><!-- if logged in as an admin -->
         <div id="adminOverload">
             <nav>
