@@ -13,10 +13,12 @@ import { default as adminModeToggle } from './Modules/adminModeToggle'
 import { default as getContent } from './Modules/getContent'
 import { default as submitAdminUpdate } from './Modules/submitAdminUpdate'
 import { default as getNewSectionData } from './Modules/getNewSectionData'
+import { default as convertLinks } from './Modules/linkConverter'
 
 const route = useRoute()
 const vueRouter = useRouter()
 const auth = getAuth()
+const adminPage = ref(false)
 //*------------------
 
 
@@ -43,6 +45,9 @@ const adminLink = ref("/admin")
 
 //* Checks if the page is set to admin mode
 const adminPageCheck = async () => {
+    if(adminPage.value == false){
+        convertLinks()
+    }
     admin.value = await adminCheck()
 }
 
@@ -72,7 +77,6 @@ await findPageTitle()
 //* Makes text fields editable
 const adminLinkExtention = ref("Loading")
 
-const adminPage = ref(false)
 
 const isAdminPage = () => {
     let result = false
@@ -181,6 +185,7 @@ const closeImageLibrary = (e) => {
 }
 
 //?------------------
+
 
 </script>
 
