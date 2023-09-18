@@ -29,6 +29,39 @@ let dataset = props.data
 let nav = props.nav[0]
 let ale = props.ale
 
+
+
+function convertHTML(str) { //* credits: https://forum.freecodecamp.org/t/convert-html-entities/595351
+  str = `${str}` //? converts numbers to string
+
+  const symbols = {
+    "&amp;": "&",
+    "&lt;": "<",
+    "&gt;": ">",
+    "&quot;": "\"",
+    "&apos;": "'"
+  }
+  for (const symbol in symbols) {
+    if (str.indexOf(symbol) >= 0) {
+      const newStr = str.replaceAll(symbol, symbols[symbol])
+      return newStr
+    }
+  }
+  return str;
+}
+
+//? convert html entities
+for(let i = 0; i < dataset.length; i++){
+  const keys = Object.keys(dataset[i]);
+  keys.forEach(key => {
+    const newValue = convertHTML(dataset[i][key])
+    dataset[i][key] = newValue
+  })
+
+}
+
+
+
 const deleteSection = async (index, page) => {
   await deleteContentForPage(index, page)
   router.push('/update')

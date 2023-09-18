@@ -7,10 +7,7 @@ const route = useRoute()
 
 
 watch(route, async () => {
-    console.log(route.path)
     if(route.path == "/update"){
-        console.log("Go -1")
-        
         router.go(-1)
     }
 })
