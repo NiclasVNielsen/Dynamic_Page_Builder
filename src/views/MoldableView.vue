@@ -72,7 +72,25 @@ await findPageTitle()
 //* Makes text fields editable
 const adminLinkExtention = ref("Loading")
 
-const updateAdminStatus = async (condition = route.params.admin == "admin", link = adminLink.value) => {
+const adminPage = ref(false)
+
+const isAdminPage = () => {
+    let result = false
+
+    let path = route.path.split('/')
+    path = path[path.length - 1]
+    if(path == 'admin'){
+        result = true
+    }
+
+    adminPage.value = result
+}
+
+const updateAdminStatus = async (condition = null, link = adminLink.value) => {
+    if(condition == null){
+        isAdminPage()
+        condition = adminPage.value
+    }
     const response = await adminModeToggle(condition, link)
     adminLinkExtention.value = response.adminLinkExtention
     adminLink.value = response.adminLink
@@ -175,7 +193,7 @@ const closeImageLibrary = (e) => {
             <nav>
                 <div class="adminToggle">
                     <RouterLink :to="adminLink">Admin</RouterLink>
-                    <template v-if="route.params.admin != 'admin'"> <!-- if not admin -->
+                    <template v-if="!adminPage"> <!-- if not admin -->
                         <div class="toggle off"></div>
                     </template>
                     <template v-else> <!-- if admin -->
@@ -189,7 +207,7 @@ const closeImageLibrary = (e) => {
                     Log out!
                 </p>
             </nav>
-            <div class="adminSubmit" @click="adminUpdateSubmit" v-if="route.params.admin == 'admin'">
+            <div class="adminSubmit" @click="adminUpdateSubmit" v-if="adminPage">
                 Update!
             </div>
         </div>
@@ -204,7 +222,7 @@ const closeImageLibrary = (e) => {
 
 
 
-    <template v-if="route.params.admin == 'admin' && auth.currentUser">
+    <template v-if="adminPage && auth.currentUser">
         <div v-if="newSection == false" class="addNewSectionField" @click="newSection = true; populateNewSectionData(selectedTemplate)">
             <figure>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>

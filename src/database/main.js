@@ -46,7 +46,7 @@ export const getNavigationForPage = async(page = "/") => {
       })
     
       if(response.length != 1){
-        if(page == "/update"){
+        if(page == "/update" || page == "/login"){
           resolve([{template: "None"}])
 
         }else{
