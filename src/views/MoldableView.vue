@@ -45,9 +45,6 @@ const adminLink = ref("/admin")
 
 //* Checks if the page is set to admin mode
 const adminPageCheck = async () => {
-    if(adminPage.value == false){
-        convertLinks()
-    }
     admin.value = await adminCheck()
 }
 
@@ -114,6 +111,13 @@ const loadContent = async () => {
     const response = await getContent(title.value, navigation.value)
     data.value = response.data
     navigation.value = response.navigation
+    
+    //? setTimeout is just to make async
+    setTimeout(() => {
+        if(adminPage.value == false){
+            convertLinks()
+        }
+    }, 0);
 }
 loadContent()
 
