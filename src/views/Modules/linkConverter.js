@@ -21,8 +21,14 @@ export default async function convertLinks () {
                         }else{
                             data[0] = data[0].trim()
                             data[1] = data[1].trim()
+                            if(data[1].match(/^http/)){
+                                data[1] = `<a target="_blanc" href="${data[1]}">${data[0]}</a>`
+                            }else{
+                                data[1] = `<a href="${data[1]}">${data[0]}</a>`
+                            }
                             
-                            field.innerHTML = field.innerHTML.replace(`${regexResult[index]}`, `<a href="${data[1]}">${data[0]}</a>`)
+                            
+                            field.innerHTML = field.innerHTML.replace(`${regexResult[index]}`, data[1])
                         }
                     })
                 }
