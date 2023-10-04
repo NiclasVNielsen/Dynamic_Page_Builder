@@ -6,33 +6,32 @@ const data = props.data
 
 //? Needed data
 /* 
-    Heading1: String
-    Paragraph1: String
-    Image1: String
+    heading1
+    paragraph1
 */
+
 
 </script>
 
-
-
 <template>
-    <div>
-        <p class="editable" data-field="heading1">
+    <div class="box">
+        <h2 class="editable" data-field="heading1">
             {{ data.heading1 }}
-        </p>
+        </h2>
         <p class="editable" data-field="paragraph1">
             {{ data.paragraph1 }}
         </p>
-        <img :src="data.image1" alt="Empty image" class="editable" data-field="image1">
         <br>
     </div>
 </template>
 
-
-
 <style lang="sass" scoped>
 
-img
-    width: 200px
+h2
+    margin-bottom: 24px
+    max-width: 768px
+
+p
+    max-width: 768px
 
 </style>

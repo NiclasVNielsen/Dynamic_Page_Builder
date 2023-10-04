@@ -12,9 +12,16 @@ import { reOrderContentForPage, deleteContentForPage } from '../database/main';
 import userNav from './templates/navigations/userNav.vue';
 import { useRouter } from 'vue-router'
 
-import tem1 from './templates/1.vue';
-import tem2 from './templates/2.vue';
-import tem3 from './templates/3.vue';
+import Footer from './templates/Footer.vue';
+import Paragraph_and_Image from './templates/Paragraph_and_Image.vue';
+import Image_and_Paragraph from './templates/Image_and_Paragraph.vue';
+import Paragraph_Left_Aligned from './templates/Paragraph_Left_Aligned.vue';
+import Paragraph_Centered from './templates/Paragraph_Centered.vue';
+import Gallery_3_Images from './templates/Gallery_3_Images.vue';
+import Gallery_4_Images from './templates/Gallery_4_Images.vue';
+import Gallery_6_Images from './templates/Gallery_6_Images.vue';
+import Gallery_6_Images_with_Text from './templates/Gallery_6_Images_with_Text.vue';
+
 
 const router = useRouter()
 
@@ -35,6 +42,16 @@ function convertHTML(str) { //* credits: https://forum.freecodecamp.org/t/conver
   str = `${str}` //? converts numbers to string
 
   const symbols = {
+    "<div>": "<br>",
+    "</div>": "",
+    "<script": "No you don't"
+  }
+  for (const symbol in symbols) {
+    if (str.indexOf(symbol) >= 0) {
+      str = str.replaceAll(symbol, symbols[symbol])
+    }
+  }
+  /* const symbols = {
     "&amp;": "&",
     "&lt;": "<",
     "&gt;": ">",
@@ -46,7 +63,7 @@ function convertHTML(str) { //* credits: https://forum.freecodecamp.org/t/conver
       const newStr = str.replaceAll(symbol, symbols[symbol])
       return newStr
     }
-  }
+  } */
   return str;
 }
 
@@ -98,17 +115,42 @@ const changeOrder = async (index, page, direction) => {
         <p @click="deleteSection(index, data.page)">X</p>
         <p @click="changeOrder(index, data.page, 'down')">v</p>
       </div>
+      
 
       <template v-if="data.template == 1">
-        <tem1 :data = "data"/>
+        <Paragraph_and_Image :data = "data"/>
       </template>
 
       <template v-if="data.template == 2">
-        <tem2 :data = "data"/>
+        <Image_and_Paragraph :data = "data"/>
       </template>
 
       <template v-if="data.template == 3">
-        <tem3 :data = "data"/>
+        <Paragraph_Left_Aligned :data = "data"/>
+      </template>
+
+      <template v-if="data.template == 4">
+        <Paragraph_Centered :data = "data"/>
+      </template>
+
+      <template v-if="data.template == 5">
+        <Gallery_3_Images :data = "data"/>
+      </template>
+
+      <template v-if="data.template == 6">
+        <Gallery_4_Images :data = "data"/>
+      </template>
+
+      <template v-if="data.template == 7">
+        <Gallery_6_Images :data = "data"/>
+      </template>
+
+      <template v-if="data.template == 8">
+        <Gallery_6_Images_with_Text :data = "data"/>
+      </template>
+
+      <template v-if="data.template == 9">
+        <Footer :data = "data"/>
       </template>
     </section>
   </template>

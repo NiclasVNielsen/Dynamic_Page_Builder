@@ -19,6 +19,7 @@ const route = useRoute()
 const vueRouter = useRouter()
 const auth = getAuth()
 const adminPage = ref(false)
+const tipsMenu = ref(false)
 //*------------------
 
 
@@ -196,6 +197,46 @@ const closeImageLibrary = (e) => {
 
 
 <template>
+  <div @click="tipsMenu = !tipsMenu" class="tipsMenu" v-if="tipsMenu">
+    <div>
+        <p>
+            <b>
+                Catch People
+            </b>
+        </p>
+        <p>
+            You should catch people in the first 3 words of every paragraph if you want them to read it
+        </p>
+        <br>
+        <p>
+            <b>
+                Image Size
+            </b>
+        </p>
+        <p>
+            Always check the pixel size of images before uploading.
+        </p>
+        <p>
+            An image that covers the page from left to right should be 1920px wide at most.
+        </p>
+        <p>
+            Feel free to do some rough math for smaller images
+        </p>
+        <br>
+        <p>
+            <b>
+                How to make links in text
+            </b>
+        </p>
+        <p>
+            To make a link type * Text @ Link * (example: * google @ http://www.google.com *)
+        </p>
+        <p>
+            If you want to link to a subpage of this website do * text @ /page * (example: * About page! @ /about *)
+        </p>
+        <br>
+    </div>
+  </div>
   <main>
     <template v-if="auth.currentUser"><!-- if logged in as an admin -->
         <div id="adminOverload">
@@ -214,6 +255,9 @@ const closeImageLibrary = (e) => {
                 </p>
                 <p @click="logout" class="logout">
                     Log out!
+                </p>
+                <p @click="tipsMenu = !tipsMenu">
+                    Tips
                 </p>
             </nav>
             <div class="adminSubmit" @click="adminUpdateSubmit" v-if="adminPage">
@@ -320,8 +364,16 @@ const closeImageLibrary = (e) => {
     nav
         z-index: 10000
         position: fixed
-        top: 0
+        top: 66px
         right: 0
+        transform: translateX(calc(100% - 25px))
+        padding: 8px 16px 8px 45px
+        clip-path: polygon(25px 0%, 100% 0%, 100% 100%, 25px 100%, 0% 50%)
+        background: #eee
+        text-align: right
+        transition: 250ms
+        &:hover
+            transform: translateX(0)
         .adminToggle
             display: flex
             align-items: center
@@ -329,10 +381,15 @@ const closeImageLibrary = (e) => {
             a
                 margin-right: .5em
     .adminSubmit
+        z-index: 10001
         position: fixed
         bottom: 1em
         right: 1em
         cursor: pointer
+        background: #fff
+        padding: 10px 15px
+        border-radius: 20px
+        box-shadow: 0 0 10px -5px #000 
 
 #imageLibrary
     height: 100vh
@@ -350,5 +407,21 @@ const closeImageLibrary = (e) => {
     >div
         height: 100vh
         flex: 1
+
+.tipsMenu
+    position: fixed
+    width: 100%
+    height: 100vh
+    z-index: 1000
+    display: flex
+    justify-content: center
+    align-items: center
+    >div
+        border-radius: 10px
+        background: #eee
+        width: 90%
+        max-width: 1200px
+        height: 90vh
+        max-height: 800px
 
 </style>

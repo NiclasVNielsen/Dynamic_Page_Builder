@@ -6,24 +6,34 @@ const data = props.data
 
 //? Needed data
 /* 
-    Heading1: String
-    Paragraph1: String
-    Paragraph2: String
+    heading1
+    paragraph1
 */
+
 
 </script>
 
 <template>
-    <div>
-        <p class="editable" data-field="heading1">
+    <div class="box">
+        <h2 class="editable" data-field="heading1">
             {{ data.heading1 }}
-        </p>
+        </h2>
         <p class="editable" data-field="paragraph1">
             {{ data.paragraph1 }}
-        </p>
-        <p class="editable" data-field="paragraph2">
-            {{ data.paragraph2 }}
         </p>
         <br>
     </div>
 </template>
+
+<style lang="sass" scoped>
+
+h2
+    margin-bottom: 24px
+
+h2, p
+    max-width: 768px
+    text-align: center
+    margin-left: auto
+    margin-right: auto
+
+</style>
