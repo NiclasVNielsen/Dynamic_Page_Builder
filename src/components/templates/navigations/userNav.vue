@@ -89,6 +89,16 @@ header
     
     ul
         list-style: none
+        display: flex
+        li
+            margin-right: 15px
+            display: flex
+            align-items: center
+            p
+                cursor: pointer
+                border-radius: 3px
+                &:hover
+                    background: #F00
         a
             text-decoration: none
             color: #000

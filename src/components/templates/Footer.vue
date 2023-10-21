@@ -52,6 +52,7 @@ p
 
 footer
     margin: 80px 64px
+    padding: 0 10px
     border-bottom: 2px solid #000
 
 .editable

@@ -109,6 +109,7 @@ const data = props.data
     margin-bottom: 80px
 
 h4
+    margin-top: 24px
     font-size: 20px
     margin-bottom: 16px
 
