@@ -75,7 +75,7 @@ header
     display: flex
     align-items: center
     padding: 8px 64px
-    border-bottom: 2px solid #000
+    border-bottom: 2px solid var(--thir)
     font-weight: bold
     background: #fff
     >.headerElement
@@ -94,6 +94,11 @@ header
             margin-right: 15px
             display: flex
             align-items: center
+            a    
+                color: var(--prim)
+                transition: 100ms
+                &:hover
+                    color: var(--seco)
             p
                 cursor: pointer
                 border-radius: 3px

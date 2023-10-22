@@ -49,11 +49,12 @@ const data = props.data
 p
     max-width: 768px
     padding-bottom: .4em
+    color: var(--prim)
 
 footer
     margin: 80px 64px
     padding: 0 10px
-    border-bottom: 2px solid #000
+    border-bottom: 2px solid var(--thir)
 
 .editable
     text-decoration: underline
@@ -64,5 +65,9 @@ footer
     margin: 10px 0
     > div
         margin-right: 15px
+        svg
+            fill: var(--prim)
+            &:hover
+                fill: var(--seco)
 
 </style>

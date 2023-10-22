@@ -10,6 +10,11 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style lang="sass">
 
+:root
+  --prim: #34014F
+  --seco: #E800CD
+  --thir: #07E6EB
+
 *
   margin: 0
   padding: 0
@@ -30,8 +35,10 @@ img
 
 h1,h2,h3,h4,h5,h6
   font-size: 56px
+  color: var(--prim)
 
 p
   font-size: 18px
+  color: #333
 
 </style>
